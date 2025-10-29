@@ -234,7 +234,8 @@ model.to(device) # 모델을 디바이스로 이동
 # optimizer = optim.Adam(model.parameters(), lr=0.001) # Adam 옵티마이저 정의
 # 동결이 해제된(학습이 필요한) 파라미터만 추려서 정의
 params_to_update = filter(lambda p: p.requires_grad, model.parameters())
-optimizer = optim.Adam(params_to_update, lr=0.0001)
+optimizer = optim.Adam(params_to_update, lr=0.0001, weight_decay=1e-4)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=3, verbose=True)
 
 model = nn.DataParallel(model) # 다중 GPU 사용 설정
 # ----
@@ -246,6 +247,7 @@ gpu_augmentation = nn.Sequential(
     K.RandomHorizontalFlip(p=0.5),
     K.RandomVerticalFlip(p=0.5),
     K.RandomRotation(degrees=45.0, p=1.0),
+    K.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1, p=0.8),
     K.RandomGaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0), p=0.5),
     # ImageNet 정규화
     K.Normalize(mean=torch.tensor([0.485, 0.456, 0.406]), std=torch.tensor([0.229, 0.224, 0.225]))
@@ -362,6 +364,9 @@ def train():
         valid_losses.append(valid_loss)
        
         print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
+
+        # Update the learning rate scheduler
+        scheduler.step(valid_loss)
        
         # 현재 에폭의 검증 손실을 기준으로 최고의 모델을 저장
         save_best_model(valid_loss, epoch, model, optimizer, criterion)
