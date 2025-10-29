@@ -214,20 +214,20 @@ criterion = nn.CrossEntropyLoss(weight=weights_tensor) # 가중치가 적용된 
 #     param.requires_grad = False # 특징 추출기 부분의 파라미터를 고정
 
 # # 모든 파라미터를 먼저 동결
-# for param in model.parameters():
-#     param.requires_grad = False
-
-# # 동결해제, 새로 추가한 마지막 레이어의 파라미터만 학습하도록 설정
-# for param in model.classifier[-1].parameters():
-#     param.requires_grad = True
-
-# 특징 추출기(features) 부분은 동결
-for param in model.features.parameters():
+for param in model.parameters():
     param.requires_grad = False
 
-# 분류기(classifier) 부분은 모두 학습하도록 동결 해제
-for param in model.classifier.parameters():
+# # 동결해제, 새로 추가한 마지막 레이어의 파라미터만 학습하도록 설정
+for param in model.classifier[-1].parameters():
     param.requires_grad = True
+
+# 특징 추출기(features) 부분은 동결
+#for param in model.features.parameters():
+#    param.requires_grad = False
+
+# 분류기(classifier) 부분은 모두 학습하도록 동결 해제
+#for param in model.classifier.parameters():
+#    param.requires_grad = True
 
 model.to(device) # 모델을 디바이스로 이동
 
@@ -399,5 +399,6 @@ if __name__ == '__main__':
     import torch.multiprocessing
     torch.multiprocessing.freeze_support()
     train()
+
 
 
