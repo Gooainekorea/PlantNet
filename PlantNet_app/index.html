@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>식물 분류 시스템</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      </svg>
+    </div>
+    <div class="header-content">
+      <h1>식물 분류 시스템</h1>
+      <p>AI 기반 식물 식별 및 분류</p>
+    </div>
+    <div class="me" style="display: flex; margin: 0 auto; font-size: 2rem; font-weight: bold; color: #007a31;"> 
+      닮은 식물 찾기 AI 
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Plant List Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+        </svg>
+        <h2>기본 사진 목록</h2>
+      </div>
+      <div class="panel-content">
+        <div class="plant-grid">
+          <!-- 식물 목록 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Analysis Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>이미지 분석</h2>
+      </div>
+      <div class="panel-content">
+        <div class="analysis-content">
+          <div class="upload-prompt" id="uploadPrompt">
+            <div class="upload-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3>사진을 업로드하세요</h3>
+            <p>JPG, PNG 형식 지원</p>
+            <button class="btn btn-primary" id="selectBtn">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              사진 선택
+            </button>
+            <input type="file" id="fileInput" accept="image/jpeg, image/png" style="display: none;">
+          </div>
+
+          <div class="image-preview" id="imagePreview">
+            <img src="images/page/placeholder.svg" alt="선택된 식물" class="preview-image" id="previewImage">
+            <button class="close-button" id="closeBtn">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div class="button-group">
+              <button class="btn btn-primary" id="analyzeBtn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                식물 분석하기
+              </button>
+              <button class="btn btn-secondary" id="changeBtn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                다른 사진 선택
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2>분석 결과</h2>
+      </div>
+      <div class="panel-content">
+        <div class="results-empty" id="resultsEmpty">
+          <div class="results-empty-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+            </svg>
+          </div>
+          <div class="results-empty-text">
+            
+          </div>
+          <p>사진을 업로드하고 분석을 시작하세요</p>
+        </div>
+
+        <div class="results-content" id="resultsContent">
+
+
+          <div class="result-section">
+            <h3>식별 결과</h3>
+            <div class="result-item" id="scientificNameBox">
+              <div class="result-label">학명</div>
+              <div class="result-value" id="scientificName">Lactuca sativa</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">일반명</div>
+              <div class="result-value" id="commonName">상추 (Lettuce)</div>
+            </div>
+          </div>
+
+          <div class="result-section">
+            <h3>상세 설명</h3>
+            <div class="description-text" id="description">
+              상추(Lactuca sativa)는 국화과에 속하는 한해살이 또는 두해살이 식물입니다. 원재소로 널리 재배되며, 샐러드의 주재료로 사용됩니다. 원산지는 지중해 연안으로 추정됩니다.
+            </div>
+          </div>
+
+          <button class="btn btn-secondary reset-button" id="resetBtn">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            처음으로 돌아가기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Plant Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>사진 저장</h3>
+        <button class="modal-close" id="modalClose">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>업로드한 사진을 기본 사진 목록에 추가하시겠습니까?</p>
+      </div>
+      <div class="modal-buttons">
+        <button class="btn btn-secondary" id="modalNo">아니오</button>
+        <button class="btn btn-primary" id="modalYes">예</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div class="modal-overlay" id="qrModalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>QR코드로 사진 올리기</h3>
+        <button class="modal-close" id="qrModalClose">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <div class="qr-upload-section">
+          <h4>모바일에서 업로드</h4>
+          <p>스마트폰으로 QR코드를 스캔하여 사진을 업로드하세요.</p>
+          <p>같은 wifi에 연결되있어야 유효합니다.</p>
+          <div class="qr-container">
+            <div id="qrcode"></div>
+          </div>
+        </div>
+        <div class="or-divider">또는</div>
+        <h4>PC에서 업로드</h4>
+        <button class="btn btn-secondary" id="uploadFromComputerBtn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 8px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          PC에서 파일 선택
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
