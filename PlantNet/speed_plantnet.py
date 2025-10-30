@@ -66,10 +66,7 @@ os.makedirs(model_path, exist_ok=True)
 best_model_path = os.path.join(model_path, 'best_model.pth')
 
 class ModelManager:
-    """
-    훈련 중에 최고의 모델을 저장하는 클래스.
-    검증 손실이 이전 최소값보다 작으면 저장합니다
-    """
+    # 원래 최고모델저장 클래스였지만 로드까지 맏게된 클래스
     def __init__(
         self, best_valid_loss=float('inf')
     ):
@@ -213,32 +210,35 @@ criterion = nn.CrossEntropyLoss(weight=weights_tensor) # 가중치가 적용된 
 # for param in model.features.parameters():
 #     param.requires_grad = False # 특징 추출기 부분의 파라미터를 고정
 
-# # 모든 파라미터를 먼저 동결
+# 모든 파라미터를 먼저 동결
 for param in model.parameters():
     param.requires_grad = False
 
-# # 동결해제, 새로 추가한 마지막 레이어의 파라미터만 학습하도록 설정
+# 동결해제, 새로 추가한 마지막 레이어의 파라미터만 학습하도록 설정
 for param in model.classifier[-1].parameters():
     param.requires_grad = True
 
-# 특징 추출기(features) 부분은 동결
-#for param in model.features.parameters():
-#    param.requires_grad = False
+# # 특징 추출기(features) 부분은 동결
+# for param in model.features.parameters():
+#     param.requires_grad = False
 
-# 분류기(classifier) 부분은 모두 학습하도록 동결 해제
-#for param in model.classifier.parameters():
-#    param.requires_grad = True
+# # 분류기(classifier) 부분은 모두 학습하도록 동결 해제
+# for param in model.classifier.parameters():
+#     param.requires_grad = True
 
 model.to(device) # 모델을 디바이스로 이동
 
 # optimizer = optim.Adam(model.parameters(), lr=0.001) # Adam 옵티마이저 정의
+
 # 동결이 해제된(학습이 필요한) 파라미터만 추려서 정의
 params_to_update = filter(lambda p: p.requires_grad, model.parameters())
-optimizer = optim.Adam(params_to_update, lr=0.0001, weight_decay=1e-4)
-scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=3, verbose=True)
+#optimizer = optim.Adam(params_to_update, lr=0.0001)
+
+# 쓰읍 과적합 자꾸됨 학습률 낮추고 규제 강화함. 와 학습률을 대체 얼마나 낮추는거임
+optimizer = optim.Adam(params_to_update, lr=1e-5, weight_decay=5e-4)
 
 model = nn.DataParallel(model) # 다중 GPU 사용 설정
-# ----
+# ---
 
 # ------------------------------------GPU가 담당할 증강 및 정규화 파이프라인 정의--
 gpu_augmentation = nn.Sequential(
@@ -247,7 +247,6 @@ gpu_augmentation = nn.Sequential(
     K.RandomHorizontalFlip(p=0.5),
     K.RandomVerticalFlip(p=0.5),
     K.RandomRotation(degrees=45.0, p=1.0),
-    K.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1, p=0.8),
     K.RandomGaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0), p=0.5),
     # ImageNet 정규화
     K.Normalize(mean=torch.tensor([0.485, 0.456, 0.406]), std=torch.tensor([0.229, 0.224, 0.225]))
@@ -364,9 +363,6 @@ def train():
         valid_losses.append(valid_loss)
        
         print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
-
-        # Update the learning rate scheduler
-        scheduler.step(valid_loss)
        
         # 현재 에폭의 검증 손실을 기준으로 최고의 모델을 저장
         save_best_model(valid_loss, epoch, model, optimizer, criterion)
@@ -399,6 +395,5 @@ if __name__ == '__main__':
     import torch.multiprocessing
     torch.multiprocessing.freeze_support()
     train()
-
 
 
