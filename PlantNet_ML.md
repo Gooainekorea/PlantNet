@@ -81,4 +81,7 @@ CUDA 버전 확인: nvidia-smi
 4. 'gui_test.py'        : 모델 테스트
 
 
-![deep_learning_workflow](deep_learning_workflow.png)
+![deep_learning_workflow](img/deep_learning_workflow.png)
+
+손실 함수 그래프
+![loss](img/loss.png)

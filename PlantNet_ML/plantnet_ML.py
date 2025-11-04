@@ -1,7 +1,18 @@
 """
 파일명: plantnet_ML.py
-머신러닝 데이터 학습처리
-훈련 속도 최적화 중점
+
+AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
+최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
+
+- Kornia 라이브러리를 활용한 GPU가속 데이터 증강을 구현해 효율을 높임
+    학습을 위한 이미지 데이터 증강처리 - 뒤집기,회전,블러등 GPU에서 처리
+    -> CPU 병목 현상을 크게 줄임
+
+- 훈련 프로세스
+    손실함수(class_weights) : 클래스 샘플 수에 반비례
+    옵티마이저(Adam) : 학습률 감소, 가중치 감쇠
+    DataLoader의 num_workers, pin_memory로 CPU에서 GPU로 데이터 전송 최적화
+
 """
 import numpy as np
 import pandas as pd
@@ -153,12 +164,12 @@ simple_transform = transforms.Compose([ # CPU가 담당하는 변환부분
 
 # 데이터셋 정의
 # transform에 클래스의 인스턴스를 전달. CPU 변환만 적용
-train_dataset = datasets.ImageFolder(
+train_dataset = datasets.ImageFolder( # 트레이닝 데이터
     root=f'{images_path}train/',
     transform=simple_transform 
 )
 
-test_dataset = datasets.ImageFolder(
+test_dataset = datasets.ImageFolder( # 테스트 데이터
     root=f'{images_path}test/',
     transform=simple_transform 
 )
@@ -225,6 +236,9 @@ optimizer = optim.Adam(params_to_update, lr=1e-5, weight_decay=5e-4)
 
 # ------------------------------------GPU가 담당할 증강 및 정규화 파이프라인 정의--
 gpu_augmentation = nn.Sequential(
+    """
+
+    """
     # 사전 훈련 모델 사용시 반드시 해당 모델의 훈련에 사용됬던 것과 동일한 평균과 표준편차로 입력 이미지를 정규화 해야 한다.
     # 아니면 믿지못할 학습그래프가 나올것이다
     K.RandomHorizontalFlip(p=0.5),
@@ -249,12 +263,12 @@ from torch.utils.data import DataLoader, Subset
 batch_size = 32 # 32 
 num_workers = 4 # 할당코어수, windows는 멀티프로세싱땜시 높이면 오히려 느려질수도 있다함
 prefetch_factor= 4 # 각 워커가 미리 로드하는 배치 수 - rem
-subset = None
+subset = None # 일부만 학습하고 싶을때
 train_subset = None
 test_subset = None
 
 
-if subset is not None:
+if subset is not None: # 일부만 학습
     print(f"subsetting data to {subset} results")
     train_subset_indices = list(range(subset if subset < len(train_dataset) else len(train_dataset)))
     train_subset = Subset(train_dataset, train_subset_indices)
@@ -263,31 +277,22 @@ if subset is not None:
     test_subset_indices = list(range(subset if subset < len(test_dataset) else len(test_dataset)))
     test_subset = Subset(test_dataset, test_subset_indices)
 
-
-# # DataLoader
-# train_loader = DataLoader(
-#     train_dataset, batch_size=batch_size, shuffle=True, 
-#     num_workers=num_workers, pin_memory=True, prefetch_factor=prefetch_factor
-# )
-# test_loader = DataLoader(
-#     test_dataset, batch_size=batch_size, shuffle=False, 
-#     num_workers=num_workers, pin_memory=True, prefetch_factor=prefetch_factor
-# )
-
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
+train_loader = DataLoader(
+    train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True
+    )
+test_loader = DataLoader(
+    test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True
+    )
 
 
 
 
 #----------------------------------------
 # 훈련 및 검증 로직
-
 print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
 
 # ModelManager 인스턴스 생성
 save_best_model = ModelManager()
-
 
 def train():
     epochs = 50  # 총 에폭 수 설정 50
@@ -349,8 +354,7 @@ def train():
        
         # 현재 에폭의 검증 손실을 기준으로 최고의 모델을 저장
         save_best_model(valid_loss, epoch, model, optimizer, criterion)
-        # save_best_model.save_model(epoch, model, optimizer, criterion)
-        # save_best_model.save_model_state(epoch, model)
+
 
 
     print('훈련이 완료되었습니다.')
