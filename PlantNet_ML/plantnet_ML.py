@@ -336,7 +336,7 @@ if subset is not None: # 일부만 학습
     test_subset = Subset(test_dataset, test_subset_indices)
 
 
-#----------------데이터 로더
+# DataLoader 생성 (데이터셋, 배치 크기, 셔플 여부, 워커 수 등 설정)
 train_loader = DataLoader(
     train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True
     )
