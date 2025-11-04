@@ -190,13 +190,10 @@ class ModelManager:
         - model: 저장할 모델 객체
 
         - 모델 가중치만 저장
-
-설명 기력 떨어짐 
+        
         """
-        if hasattr(model, 'module'):
-            state_dict = model.module.state_dict()  # DataParallel 상태
-        else:
-            state_dict = model.state_dict()         # 단일 모델 상태
+
+        state_dict = model.state_dict() 
         torch.save({'model_state_dict': state_dict}, f'{output_path}models/model_{epochs}.pth')
 
 def show_species_sample(species_id): # 참고에 있었어
@@ -276,13 +273,6 @@ for param in model.parameters():
 for param in model.classifier[-1].parameters():
     param.requires_grad = True
 
-# # 특징 추출기(features) 부분은 동결
-# for param in model.features.parameters():
-#     param.requires_grad = False
-
-# # 분류기(classifier) 부분은 모두 학습하도록 동결 해제
-# for param in model.classifier.parameters():
-#     param.requires_grad = True
 
 model.to(device) # 모델을 디바이스로 이동
 
@@ -302,21 +292,21 @@ optimizer = optim.Adam(params_to_update, lr=1e-5, weight_decay=5e-4)
 # ------------------------------------GPU가 담당할 증강 및 정규화 파이프라인 정의--
 gpu_augmentation = nn.Sequential(
     """
-
+    GPU에서 실행할 이미지 증강 및 정규화 파이프라인
+    PyTorch의 nn.Sequential - 신경망 레이어를 컨테이너 모듈로 관리하는 클래스
+    증강처리 변환을 순차적으로 연결해 최종적으로 증강 및 정규화된 이미지 출력
     """
     # 사전 훈련 모델 사용시 반드시 해당 모델의 훈련에 사용됬던 것과 동일한 평균과 표준편차로 입력 이미지를 정규화 해야 한다.
     # 아니면 믿지못할 학습그래프가 나올것이다
-    K.RandomHorizontalFlip(p=0.5),
-    K.RandomVerticalFlip(p=0.5),
-    K.RandomRotation(degrees=45.0, p=1.0),
-    K.RandomGaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0), p=0.5),
-    # ImageNet 정규화
+    K.RandomHorizontalFlip(p=0.5), # 좌우 반전
+    K.RandomVerticalFlip(p=0.5), # 상하반전
+    K.RandomRotation(degrees=45.0, p=1.0), # 1~45 랜덤 회전
+    K.RandomGaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0), p=0.5), # 가우시안 블러
+    # ImageNet 정규화 
+    # 중요함 - 훈련된 사전학습 모델에 맞춰 입력 이미지 평균과 표준편차로 정규화
     K.Normalize(mean=torch.tensor([0.485, 0.456, 0.406]), std=torch.tensor([0.229, 0.224, 0.225]))
 ).to(device)
 
-# 커스텀 로더 (BGR 형식 그대로 반환하도록 수정)
-# def opencv_loader(path):
-#     return cv2.imread(path)
 gpu_normalization = nn.Sequential(
     K.Normalize(mean=torch.tensor([0.485, 0.456, 0.406]), std=torch.tensor([0.229, 0.224, 0.225]))
 ).to(device)
@@ -334,6 +324,9 @@ test_subset = None
 
 
 if subset is not None: # 일부만 학습
+"""
+데이터가 너무 커서 일부만 학습시키고 싶어서 마ㄴ든 함수 
+"""
     print(f"subsetting data to {subset} results")
     train_subset_indices = list(range(subset if subset < len(train_dataset) else len(train_dataset)))
     train_subset = Subset(train_dataset, train_subset_indices)
@@ -342,6 +335,8 @@ if subset is not None: # 일부만 학습
     test_subset_indices = list(range(subset if subset < len(test_dataset) else len(test_dataset)))
     test_subset = Subset(test_dataset, test_subset_indices)
 
+
+#----------------데이터 로더
 train_loader = DataLoader(
     train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True
     )
@@ -360,7 +355,7 @@ print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작�
 save_best_model = ModelManager()
 
 def train():
-    epochs = 50  # 총 에폭 수 설정 50
+    epochs = 50  # 총 에폭 수 설정 50 - 학습해봤더니 이정도로는 필요 없는듯
 
 
     train_losses = [] #훈련 손실 - 각 학습 단계에(ephoch) 에서 발생하는 오차, 학습 데이터에 대한 예측과 실제 타깃 값 간의 차이
