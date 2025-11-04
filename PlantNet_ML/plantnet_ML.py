@@ -190,7 +190,8 @@ class ModelManager:
         - model: 저장할 모델 객체
 
         - 모델 가중치만 저장
-        설명 기력 떨어짐 
+
+설명 기력 떨어짐 
         """
         if hasattr(model, 'module'):
             state_dict = model.module.state_dict()  # DataParallel 상태
@@ -198,7 +199,7 @@ class ModelManager:
             state_dict = model.state_dict()         # 단일 모델 상태
         torch.save({'model_state_dict': state_dict}, f'{output_path}models/model_{epochs}.pth')
 
-def show_species_sample(species_id):
+def show_species_sample(species_id): # 참고에 있었어
     # List all files in the directory
     directory_path = f"{images_path}train/{species_id}/"
     all_files = os.listdir(directory_path)
