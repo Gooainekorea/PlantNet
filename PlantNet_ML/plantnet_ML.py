@@ -67,10 +67,23 @@ os.makedirs(model_path, exist_ok=True)
 best_model_path = os.path.join(model_path, 'best_model.pth')
 
 class ModelManager:
-    # 원래 최고모델저장 클래스였지만 로드까지 맏게된 클래스
-    def __init__(
-        self, best_valid_loss=float('inf')
-    ):
+    """
+    원래 최고모델저장 클래스였지만 로드까지 맏게된 클래스
+    
+    그냥 쓸때 : 검증 손실 개선 시 최고 모델 저장,업데이트
+    save : 에폭별 정보/모델 저장
+    load : 저장된 모델 불러와 재사용
+
+    """
+    def __init__(self, best_valid_loss=float('inf')):
+        """
+        생성자(초기화 함수)
+        검증 손실 값 입력
+
+        검증 손실 값 저장 - best_valid_loss
+        모델 지정 - AlexNet_Weights
+        분류 클래스 수 계산해 지정 - len(species_idx["data"])
+        """
         self.best_valid_loss = best_valid_loss
         self.model_class = alexnet
         self.model_args = ()        
@@ -78,6 +91,21 @@ class ModelManager:
         self.num_classes = len(species_idx["data"]) 
 
     def __call__(self, current_valid_loss, epoch, model, optimizer, criterion):
+        """
+        최그 성능 모델 저장 - 검증 손실 개선 시 모델 저장
+        학습 도중 최고 성능 모델을 자동으로 저장하여 나중에 재사용할 수 있게 함
+        
+        - current_valid_loss: 현재 epoch의 검증 손실 값
+        - epoch: 현재 학습 epoch 번호
+        - model: 학습 중인 모델 객체
+        - optimizer: 모델 최적화 도구 객체
+        - criterion: 손실 함수 객체
+
+        - 현재 검증 손실이 최고 성능보다 좋으면 저장 진행
+        - DataParallel 적용 여부에 따라 모델 상태 사전 추출
+        - 모델, 옵티마이저 상태, 손실 함수 정보 등을 best_model_path에 저장
+        - 최고 성능 검증 손실 값 갱신 및 저장 완료 메시지 출력
+        """
         if current_valid_loss >= self.best_valid_loss:
             return
         self.best_valid_loss = current_valid_loss
@@ -99,7 +127,15 @@ class ModelManager:
         print(f"모델 저장 성공. 경로 : {best_model_path}")
 
     def load_best_model(self,model_path):
-        # 모델 객체를 내부에서 생성
+        """
+        저장된 최고 성능 모델 로드, 내부서 모델 객체 생성 - 바로쓰게함
+
+        - model_path: 저장된 모델 파일 경로
+
+        - 내부적으로 alexnet 모델 객체 생성 및 클래스 수에 맞게 출력 레이어 교체
+        - 저장된 가중치 로드 및 평가 모드로 전환
+        - 준비된 모델 객체 반환
+        """
         model = self.model_class(*self.model_args, **self.model_kwargs)
         model.classifier[-1] = torch.nn.Linear(model.classifier[-1].in_features, self.num_classes)
         checkpoint = torch.load(model_path, map_location='cpu')
@@ -108,8 +144,19 @@ class ModelManager:
         return model
 
     def load_model_data(self, model):
+        """
+        최고 성능 모델의 추가 학습에 필요한 학습 상태 정보 로드
+        학습 중단 후 이어서 재학습 시 필요한 상태 정보 복원에 사용
+        데이터 학습 중간점검 필요로 만든거라 삭제해도 무방
+
+        - model: 미리 생성된 모델 객체
+
+        - best_model_path에 저장된 체크포인트 불러옴
+        - 옵티마이저 상태 복원
+        - 학습 epoch, 손실 이름 및 파라미터 반환
+        """
         checkpoint = torch.load(best_model_path)
-        # model.load_state_dict(checkpoint['model_state_dict'])
+        # model.load_state_dict(checkpoint['model_state_dict']) # 모델 상태
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         epoch = checkpoint['epoch']
         loss_name = checkpoint['loss_name']
@@ -117,7 +164,16 @@ class ModelManager:
         return model, optimizer, epoch, loss_name, loss_params
 
     def save_model_data(self, epochs, model, optimizer, criterion):
+        """
+        특정 epoch 시점의 모델과 학습 상태 저장를 epoch 넘버에 맞춘 파일명으로 저장
+        학습의 특정 시점마다 상태를 저장해 두어 중간 재개 및 분석 가능
+        역시 삭제해도 무방
 
+        - epochs: 현재 epoch 번호 (int)
+        - model: 학습 중인 모델 객체
+        - optimizer: 최적화 도구 객체
+        - criterion: 손실 함수 객체
+        """
         torch.save({
             'epoch': epochs,
             'model_state_dict': model.state_dict(),
@@ -127,7 +183,15 @@ class ModelManager:
         }, f'{output_path}models/model_data_{epochs}.pth')
 
     def save_model(self, epochs, model):
+        """
+        모델 가중치만 별도로 저장
+        
+        - epochs: 현재 epoch 번호
+        - model: 저장할 모델 객체
 
+        - 모델 가중치만 저장
+        설명 기력 떨어짐 
+        """
         if hasattr(model, 'module'):
             state_dict = model.module.state_dict()  # DataParallel 상태
         else:
