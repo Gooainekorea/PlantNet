@@ -2,10 +2,10 @@
 Pl@ntNet-300K를 가지고 식물을 분류하는 머신러닝 학습 프로그램 입니다.
 
 ```
-PlantNet_NL
+PlantNet_ML
 ├───metadata_tools.py                 # 데이터셋의 정보(메타데이터)를 가공하고 처리
 ├───image_resizer.py                  # 이미지 전처리를 위한 크기 조정 도구
-├───plantnet.py                       # PyTorch 모델을 불러오고, 예측을 수행하는 등 핵심 AI 로직을 담은 파일
+├───plantnet.py                       # PyTorch 모델을 불러오고, 예측을 수행하는 등 머신러닝 핵심 로직을 담은 파일
 ├───gui_test.py                       # 시각적요소를 이용해 모델을 테스트할 수 있는 파일
 ├───requirements.txt                  # 프로젝트 실행에 필요한 파이썬 라이브러리 목록 파일
 │
@@ -22,7 +22,7 @@ PlantNet_NL
 
 ```
 
-## 1. 환경설정
+# 1. 환경설정
 
 ### 1. 데이터셋 다운
 [Pl@ntNet-300K](https://zenodo.org/records/5645731) 에서 Version 1.1 다운해주세요
@@ -45,14 +45,15 @@ PlantNet_NL
 1. 생성전 권한 주기
 파워쉘 관리자 권한으로 열고 cd 가상환경 파일 경로
 
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser 인터넷에서 다운로드 된 스크립트는 서명 필요
+'Set-ExecutionPolicy RemoteSigned -Scope CurrentUser' 인터넷에서 다운로드 된 스크립트는 서명 필요
 
-Set-ExecutionPolicy Unrestricted -Scope CurrentUser 모든 스크립트 실행 허용 <- 난 이걸로함
+'Set-ExecutionPolicy Unrestricted -Scope CurrentUser' 모든 스크립트 실행 허용 <- 난 이걸로함
 
 2. 생성
 ```
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+
 ```
 
 ### 4. 환경체크
@@ -71,10 +72,13 @@ torchvision 버전 확인: import torchvision; print(torchvision.__version__)
 
 CUDA 버전 확인: nvidia-smi
 
-## 파일 실행 순서
+# 파일 실행 순서
 ※ 파일상단의 경로부분 직접 수정 필요
 
-1. 데이터 전처리
-    1. 'matadata_tool.py' : 메타데이터 전처리 파일
-    2. 'image_resizer' : 이미지 크기 처리 파일
+1. 'matadata_tool.py'   : 메타데이터 전처리 파일
+2. 'image_resizer'      : 이미지 크기 처리 파일
+3. 'plantnet_ML.py'     : 머신러닝 데이터 학습 파일
+4. 'gui_test.py'        : 모델 테스트
+
+
 

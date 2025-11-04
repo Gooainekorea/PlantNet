@@ -1,3 +1,7 @@
+"""
+파일명: plantnet_ML.py
+
+"""
 import numpy as np
 import pandas as pd
 import json
@@ -8,7 +12,7 @@ import cv2
 import os
 import random
 import torch # pythorch pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130
-import torch.nn as nn
+import torch.nn as nn # 신경망 구성요소 및 모듈 제공
 from torchvision.models import alexnet, AlexNet_Weights
 import torchvision.datasets as datasets
 from torchvision import transforms
@@ -21,10 +25,10 @@ from collections import Counter
 base_input_path = '' # 기본입력경로
 input_path = f'{base_input_path}plantnet_300K/' # 데이터 폴더
 output_path = f'{base_input_path}output_data/' # 출력결과 
-plantnet_metadata_path = f'{input_path}plantnet300K_metadata.json' # 메타 데이터 파일
-images_path = f'{input_path}resized_images/'#종 id 파일
-species_idx_path = f'{input_path}class_idx_to_species_id.json'#종 id 파일
-species_name_path = f'{input_path}plantnet300K_species_id_2_name.json'#학명 파일
+#plantnet_metadata_path = f'{input_path}plantnet300K_metadata.json' # 메타 데이터 파일
+images_path = f'{input_path}resized_images/' #이미지 경로
+# species_idx_path = f'{input_path}class_idx_to_species_id.json'#종 id 파일
+# species_name_path = f'{input_path}plantnet300K_species_id_2_name.json'#학명 파일
 
 metadata = pd.read_json(f'{output_path}metadata/metadata.json')
 # species_idx = pd.read_json(f'{output_path}metadata/species_idx.json')
@@ -232,7 +236,7 @@ params_to_update = filter(lambda p: p.requires_grad, model.parameters())
 # e: 10의 거듭제곱. 1e-5 = 0.00001, 5e-4 = 0.0005
 optimizer = optim.Adam(params_to_update, lr=1e-5, weight_decay=5e-4)
 
-model = nn.DataParallel(model) # 다중 GPU 사용 설정
+# model = nn.DataParallel(model) # 다중 GPU 사용 설정
 # ---
 
 # ------------------------------------GPU가 담당할 증강 및 정규화 파이프라인 정의--
