@@ -1,3 +1,8 @@
+"""
+파일명: matadata_tool.py
+설명: 데이터 인덱싱을 위한 메타데이터 처리
+해당 파일을 실행하면 .json .csv 파일이 각각 생성됩니다.
+"""
 import pandas as pd
 import os
 
@@ -8,9 +13,6 @@ output_path = f'{base_input_path}output_data/' # 출력결과 저장 경로
 plantnet_metadata_path = f'{input_path}plantnet300K_metadata.json' # 메타 데이터 파일 경로
 species_idx_path = f'{input_path}class_idx_to_species_id.json'#종 id 파일 경로
 species_name_path = f'{input_path}plantnet300K_species_id_2_name.json'#학명 파일 경로
-
-# 파일을 그대로 실행하면 csv와 json 파일이 생성됩니다.
-
 
 # 출력 및 모델 저장 경로가 없으면 자동으로 생성
 metadata_dir = os.path.join(output_path, 'metadata')
