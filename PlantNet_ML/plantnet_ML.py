@@ -325,7 +325,9 @@ test_subset = None
 
 if subset is not None: # 일부만 학습
 """
-데이터가 너무 커서 일부만 학습시키고 싶어서 마ㄴ든 함수 
+데이터가 너무 커서 일부만 테스트시키고 싶어서 만듦
+subset에 학습 시키고 싶은 데이터수를 넣으면 그만큼만 부분 집합 으로 학습시킴
+클래스와 상관없이 처음 부분부터 n개를 뽑아 학습시키기 때문에 테스트 용도로만 적합함 
 """
     print(f"subsetting data to {subset} results")
     train_subset_indices = list(range(subset if subset < len(train_dataset) else len(train_dataset)))
@@ -364,8 +366,11 @@ def train():
 
     for epoch in range(epochs):
         print(f"Epoch {epoch} of {epochs}")
-        # --- 모델 훈련(Training) ---
-
+        """
+        --- 모델 훈련(Training) ---
+        - 총 epochs 동안 반복 합습
+        - 각 epoch마다 훈련/검증 손실 계산
+        """
         model.train()  # 모델을 훈련 모드로 설정
         gpu_augmentation.train() # 증강 모듈드 휸련 모드로
         train_running_loss = 0.0
@@ -436,10 +441,8 @@ def train():
 
 #=================================================================================
 # 모델 저장
-
-
 if __name__ == '__main__':
-    import torch.multiprocessing
+    import torch.multiprocessing # 멀티 프로세싱 충돌 방지
     torch.multiprocessing.freeze_support()
     train()
 
