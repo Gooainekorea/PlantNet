@@ -1,19 +1,20 @@
 """
 파일명: plantnet_ML.py
-
+머신러닝 데이터 학습처리
+훈련 속도 최적화 중점
 """
 import numpy as np
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
 # from PIL import Image # Pillow-SIMD 지원안함
-import kornia.augmentation as K
+import kornia.augmentation as K # GPU가속!!!!! 제발!!!! 아니 너무느려!!!!!!
 import cv2
 import os
 import random
 import torch # pythorch pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 import torch.nn as nn # 신경망 구성요소 및 모듈 제공
-from torchvision.models import alexnet, AlexNet_Weights
+from torchvision.models import alexnet, AlexNet_Weights # 사전학습 모델 불러옴
 import torchvision.datasets as datasets
 from torchvision import transforms
 from torch.utils.data import DataLoader, Subset
@@ -25,16 +26,9 @@ from collections import Counter
 base_input_path = '' # 기본입력경로
 input_path = f'{base_input_path}plantnet_300K/' # 데이터 폴더
 output_path = f'{base_input_path}output_data/' # 출력결과 
-#plantnet_metadata_path = f'{input_path}plantnet300K_metadata.json' # 메타 데이터 파일
 images_path = f'{input_path}resized_images/' #이미지 경로
-# species_idx_path = f'{input_path}class_idx_to_species_id.json'#종 id 파일
-# species_name_path = f'{input_path}plantnet300K_species_id_2_name.json'#학명 파일
 
 metadata = pd.read_json(f'{output_path}metadata/metadata.json')
-# species_idx = pd.read_json(f'{output_path}metadata/species_idx.json')
-# species_idx = dict(zip(species_idx['species_idx'], species_idx['species_id']))
-
-# 뭐지 난 딕형태로 친절하게 만들어줬는데 오히려 할일이 많아졌는걸
 
 with open(f'{output_path}metadata/species_names.json', 'r') as f:
     species_idx = json.load(f)
@@ -52,11 +46,9 @@ def show_tensor_image(tensor):
     plt.imshow(tensor)
     plt.axis('off')  # To hide axis values
     plt.show()
-    
+
+# 고집부리지말고 그냥 csv파일 불러다할껄
 #--------------------------------------------------------------
-
-
-
 plt.style.use('ggplot')
 
 model_path = os.path.join(output_path, 'models')
@@ -72,9 +64,7 @@ class ModelManager:
         self.model_class = alexnet
         self.model_args = ()        
         self.model_kwargs = {'weights': AlexNet_Weights.DEFAULT}
-        self.num_classes = len(species_idx["data"]) # 행길이가 1083이면서 2만 내놈 딕이라 다른가봄 이런 딕같은
-       
-
+        self.num_classes = len(species_idx["data"]) 
 
     def __call__(self, current_valid_loss, epoch, model, optimizer, criterion):
         if current_valid_loss >= self.best_valid_loss:
@@ -133,12 +123,6 @@ class ModelManager:
             state_dict = model.state_dict()         # 단일 모델 상태
         torch.save({'model_state_dict': state_dict}, f'{output_path}models/model_{epochs}.pth')
 
-
-
-
-
-
-
 def show_species_sample(species_id):
     # List all files in the directory
     directory_path = f"{images_path}train/{species_id}/"
@@ -163,7 +147,7 @@ def show_species_sample(species_id):
 #----------------------------------------
 
 simple_transform = transforms.Compose([ # CPU가 담당하는 변환부분
-    transforms.Resize((224, 224)), # AlexNet 입력 크기에 바로 맞춥니다.
+    transforms.Resize((224, 224)), # AlexNet 입력 크기에 맞추기
     transforms.ToTensor()          # PIL 이미지를 PyTorch 텐서로 변환
 ])
 

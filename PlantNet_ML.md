@@ -75,9 +75,9 @@ CUDA 버전 확인: nvidia-smi
 # 파일 실행 순서
 ※ 파일상단의 경로부분 직접 수정 필요
 
-1. 'matadata_tool.py'   : 메타데이터 전처리 파일
-2. 'image_resizer'      : 이미지 크기 처리 파일
-3. 'plantnet_ML.py'     : 머신러닝 데이터 학습 파일
+1. 'matadata_tool.py'   : 메타데이터 전처리 - 인덱싱 파일 생성
+2. 'image_resizer'      : 이미지 크기 처리 - 이미지 파일 생성
+3. 'plantnet_ML.py'     : 머신러닝 데이터 학습
 4. 'gui_test.py'        : 모델 테스트
 
 
