@@ -18,19 +18,13 @@ from tqdm import tqdm #실시간 진행 막대그래프
 from collections import Counter
 
 # config
-base_input_path = 'C:/Users/gooaine/PlantNet/' # 기본 입력경로 D:\ain2\PlantNet HDD라 GPU랑 CPU의 속도를 못따라옴. SSD로 바꿈
-# 여전히 GPU를 제대로 못쓰는거같음. 30%이하로 사용되고 어제 돌려놓고 나갔는데 오늘도 안끝났음. CPU사용률은 50%이상임
-# PyTorch 커뮤니티에서 비슷한 문제를 올린 사람의 글에서 이런걸 찾음
-# 'pin_memory=True를 사용하면 페이지 잠금된 호스트 메모리를 사용하므로 데이터가 사용자 몰래 이동하지 않습니다.'
-# 하.... 모델, 데이터를 .to(device)로 GPU로 올리라는데 이미 그렇게 하고 있음
-input_path = f'{base_input_path}plantnet_300K/' # 데이터 폴더 "D:\ain2\PlantNet\plantnet_300K"
-output_path = f'{base_input_path}output_data/' # 출력결과 "D:\ain2\PlantNet\output_data"
+base_input_path = '' # 기본입력경로
+input_path = f'{base_input_path}plantnet_300K/' # 데이터 폴더
+output_path = f'{base_input_path}output_data/' # 출력결과 
 plantnet_metadata_path = f'{input_path}plantnet300K_metadata.json' # 메타 데이터 파일
 images_path = f'{input_path}resized_images/'#종 id 파일
 species_idx_path = f'{input_path}class_idx_to_species_id.json'#종 id 파일
 species_name_path = f'{input_path}plantnet300K_species_id_2_name.json'#학명 파일
-convert_to_csv = True #csv변환여부
-
 
 metadata = pd.read_json(f'{output_path}metadata/metadata.json')
 # species_idx = pd.read_json(f'{output_path}metadata/species_idx.json')
