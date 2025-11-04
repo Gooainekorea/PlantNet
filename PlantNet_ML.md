@@ -29,7 +29,7 @@ PlantNet_ML
 
 메타데이터만 다운받고 싶다면 : 
 
-[메타데이터](https://lab.plantnet.org/seafile/d/bed81bc15e8944969cf6/)
+[메타데이터 다운](https://lab.plantnet.org/seafile/d/bed81bc15e8944969cf6/)
 
 다운로드 후 프로젝트 루트 디렉토리의 'plantnet_300K/'에 압축 해제
 

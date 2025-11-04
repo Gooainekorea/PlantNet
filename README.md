@@ -19,7 +19,7 @@ PlantNet_App : PlantNet_ML을 이용해 생성한 머신러닝 모델을 이용�
 - 클래스 불균형 해소를 위해 손실 함수에 가중치 적용
 - 별도의 데이터 전처리 구현
 
-자세한 부분은 [PlantNet_ML.md](Gooainekorea/PlantNet/PlantNet_ML.md) 참고
+자세한 부분은 [PlantNet_ML.md](/PlantNet_ML.md) 참고
 
 #  
 
