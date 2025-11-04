@@ -81,4 +81,4 @@ CUDA 버전 확인: nvidia-smi
 4. 'gui_test.py'        : 모델 테스트
 
 
-
+![deep_learning_workflow](deep_learning_workflow.png)
