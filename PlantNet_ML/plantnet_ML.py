@@ -243,10 +243,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # 클래스별 이미지 수 계산
 num_classes = len(species_idx["data"]) # 고유한 클래스의 수를 결정
-# num_classes = len(train_dataset.classes) # 고유한 클래스의 수를 결정
 class_counts = Counter(train_dataset.targets) # 각 클래스에 속하는 샘플의 수를 계산
-# counts_per_class = [class_counts[i] for i in range(num_classes)] # 0부터 까지 각 클래스에 대한 개수 목록을 구성
-# 클래스 불균형 해결을 위한 가중치 계산
 
 # 손실 함수와 옵티마이저 정의
 class_weights = [1.0 / class_counts[i] for i in range(len(class_counts))] # 클래스 불균형 해결을 위한 가중치 계산
@@ -262,9 +259,6 @@ model.classifier[-1] = torch.nn.Linear(4096, num_classes) # 마지막 레이어�
 # CrossEntropyLoss에 가중치 적용
 criterion = nn.CrossEntropyLoss(weight=weights_tensor) # 가중치가 적용된 손실 함수 정의
 
-# for param in model.features.parameters():
-#     param.requires_grad = False # 특징 추출기 부분의 파라미터를 고정
-
 # 모든 파라미터를 먼저 동결
 for param in model.parameters():
     param.requires_grad = False
@@ -276,18 +270,12 @@ for param in model.classifier[-1].parameters():
 
 model.to(device) # 모델을 디바이스로 이동
 
-# optimizer = optim.Adam(model.parameters(), lr=0.001) # Adam 옵티마이저 정의
 
 # 동결이 해제된(학습이 필요한) 파라미터만 추려서 정의
 params_to_update = filter(lambda p: p.requires_grad, model.parameters())
-#optimizer = optim.Adam(params_to_update, lr=0.0001)
 
-# 쓰읍 과적합 자꾸됨 학습률 낮추고 규제 강화함. 와 학습률을 대체 얼마나 낮추는거임
 # e: 10의 거듭제곱. 1e-5 = 0.00001, 5e-4 = 0.0005
 optimizer = optim.Adam(params_to_update, lr=1e-5, weight_decay=5e-4)
-
-# model = nn.DataParallel(model) # 다중 GPU 사용 설정
-# ---
 
 # ------------------------------------GPU가 담당할 증강 및 정규화 파이프라인 정의--
 gpu_augmentation = nn.Sequential(

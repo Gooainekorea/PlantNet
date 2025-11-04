@@ -78,6 +78,7 @@ CUDA 버전 확인: nvidia-smi
 1. 'matadata_tool.py'   : 메타데이터 전처리 - 인덱싱 파일 생성
 2. 'image_resizer'      : 이미지 크기 처리 - 이미지 파일 생성
 3. 'plantnet_ML.py'     : 머신러닝 데이터 학습
+        ModelManager - 모델 저장/로드 담당 클래스
 4. 'gui_test.py'        : 모델 테스트
 
 # 딥러닝 워크플로우
