@@ -10,8 +10,8 @@ import speed_plantnet as plantnet
 import json
 
 # config
-base_input_path = 'C:/Users/gooaine/PlantNet/' # 기본 입력경로 D:\ain2\PlantNet
-input_path = f'{base_input_path}plantnet_300K/' # 이미지 "D:\ain2\PlantNet\plantnet_300K"
+base_input_path = '' # 기본 입력경로 D:\ain2\PlantNet
+input_path = f'{base_input_path}plantnet_300K/resized_images' # 이미지 "D:\ain2\PlantNet\plantnet_300K"
 output_path = f'{base_input_path}output_data/' # 출력결과 "D:\ain2\PlantNet\output_data"
 plantnet_metadata_path = f'{input_path}plantnet300K_metadata.json' # 메타 데이터 파일
 species_idx_path = f'{input_path}class_idx_to_species_id.json'#종 id 파일
