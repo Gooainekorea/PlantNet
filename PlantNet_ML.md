@@ -26,13 +26,17 @@ PlantNet_NL
 
 ### 1. 데이터셋 다운
 [Pl@ntNet-300K](https://zenodo.org/records/5645731) 에서 Version 1.1 다운해주세요
-[메타데이터만 다운로드](https://lab.plantnet.org/seafile/d/bed81bc15e8944969cf6/)
+
+메타데이터만 다운받고 싶다면 : 
+
+[메타데이터](https://lab.plantnet.org/seafile/d/bed81bc15e8944969cf6/)
+
 다운로드 후 프로젝트 루트 디렉토리의 'plantnet_300K/'에 압축 해제
 
 ### 2. 실행 경로
 하드디스크에서 실행시 하드디스크의 입출력 속도에 맞춰집니다.
 
-    -> HDD 100% CPU 30% GPU 1~3% 를 보게 됩니다.
+(습관적으로 하던 경로에 만들고 실행하다 HDD 100% CPU 30% GPU 1~3% 를 봄)
 
 처음부터 SSD(NVMe)에서 실행해 주세요
 
