@@ -22,3 +22,8 @@ PlantNet_App : PlantNet_ML을 이용해 생성한 머신러닝 모델을 이용�
 자세한 부분은 [PlantNet_ML.md](/PlantNet_ML.md) 참고
 
 # PlantNet_App
+PlantNet_ML을 이용해 생성한 머신러닝 모델을 이용해 식물 분류 웹 어플리케이션을 구현
+FastAPI 를 이용해 파이썬 서버와 노드js서버 연동
+웹js - 프론트엔드 동작
+js서버(포트번호 3000)  - 백엔드
+파이썬서버 - 모델 돌리고 출력된 학명을 api로 위키검색해 가져옴
