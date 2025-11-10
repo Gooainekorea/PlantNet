@@ -1,6 +1,7 @@
 # PlantNet_ML
 Pl@ntNet-300K를 가지고 식물을 분류하는 머신러닝 학습 프로그램 입니다.
 
+## 구조
 ```
 PlantNet_ML
 ├───metadata_tools.py                 # 데이터셋의 정보(메타데이터)를 가공하고 처리
@@ -86,3 +87,7 @@ CUDA 버전 확인: nvidia-smi
 
 # 학습 곡선
 ![loss](img/loss.png)
+
+
+# 주요 기술 구현 포인트
+
