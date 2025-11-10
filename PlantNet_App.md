@@ -32,7 +32,6 @@ src안에 metadata 폴더를 만들고 전처리한 메타데이터를 넣어줍
 
 ## 패키지 설치
 Python 서버에 필요한 패키지를 설치합니다: pip install -r src\requirements.txt
-아... 잠깐 버전충돌 아 아아아아아ㅏㅏㅏ
 
 두 개의 터미널을 열고 각각 서버를 실행합니다.
 터미널 1 (Node.js 서버): node server.js
