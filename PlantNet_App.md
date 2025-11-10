@@ -9,7 +9,8 @@ Python 3.8 이상 버전을 설치합니다.
 Node.js LTS 버전을 설치합니다.
 (GPU 사용 시) NVIDIA 드라이버와 CUDA Toolkit 13.0을 설치합니다.
 터미널을 열고 PlantNet_app 폴더로 이동합니다.
-pip install --upgrade pip
+
+
 Node.js 서버에 필요한 패키지를 설치합니다: npm install
 Python 가상 환경을 만들고 활성화합니다: 
 
@@ -23,6 +24,10 @@ Python 가상 환경을 만들고 활성화합니다:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
+pip install --upgrade pip
+python -m pip install --upgrade pip
+
+아... 잠깐 버전충돌
 
 Python 서버에 필요한 패키지를 설치합니다: pip install -r src\requirements.txt
 두 개의 터미널을 열고 각각 서버를 실행합니다.
