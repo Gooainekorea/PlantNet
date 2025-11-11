@@ -37,3 +37,8 @@ Python 서버에 필요한 패키지를 설치합니다: pip install -r src\requ
 터미널 1 (Node.js 서버): node server.js
 터미널 2 (Python 서버, 가상환경 활성화 필수): uvicorn src.python_server:app --host 127.0.0.1 --port 5000
     파워쉘 실행시 : python -m uvicorn src.python_server:app --host 127.0.0.1 --port 5000
+
+
+---
+파일별 기능분리중
+---
