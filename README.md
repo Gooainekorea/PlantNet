@@ -6,9 +6,8 @@ PlantNet_ML : 머신러닝 학습 프로그래밍을 구현
 PlantNet_App : PlantNet_ML을 이용해 생성한 머신러닝 모델을 이용해 식물 분류 웹 어플리케이션을 구현
 
 
-# PlantNet_ML
+# 01. PlantNet_ML
 예제코드 : [Olly Rennard님의 Kaggle - Pl@ntNet](https://www.kaggle.com/code/ollyrennard/pl-ntnet/notebook)
-(Olly님 감사합니다.)
 
 해당 머신러닝 학습 프로그래밍에서는 논문 결과의 재현 및 실현한 코드를 참고해 
 
@@ -21,7 +20,7 @@ PlantNet_App : PlantNet_ML을 이용해 생성한 머신러닝 모델을 이용�
 
 자세한 부분은 [PlantNet_ML.md](/PlantNet_ML.md) 참고
 
-# PlantNet_App
+# 02. PlantNet_App
 PlantNet_ML을 이용해 생성한 머신러닝 모델을 이용해 식물 분류 웹 어플리케이션을 구현
 
 FastAPI 를 이용해 파이썬 서버와 노드js서버 연동
