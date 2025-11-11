@@ -83,10 +83,10 @@ CUDA 버전 확인: nvidia-smi
 4. 'gui_test.py'        : 모델 테스트
 
 # 딥러닝 워크플로우
-![deep_learning_workflow](PlantNet/00_과정정리/img/deep_learning_workflow.png)
+![deep_learning_workflow](00_과정정리/img/deep_learning_workflow.png)
 
 # 학습 곡선
-![loss](PlantNet/00_과정정리/img/loss.png)
+![loss](00_과정정리/img/loss.png)
 
 
 # 주요 기술 구현 포인트
