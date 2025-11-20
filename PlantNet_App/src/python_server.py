@@ -14,7 +14,6 @@ from torchvision.models import alexnet, AlexNet_Weights
 from collections import OrderedDict
 from googletrans import Translator
 
-# config
 
 # 현재 파일의 위치를 기준으로 경로 설정
 current_path = pathlib.Path(__file__).parent
@@ -23,7 +22,13 @@ best_model_path = current_path / 'model' / 'best_model.pth'
 
 models = {}
 
-@asynccontextmanager
+"""
+주기 관리를 위한 데코레이터(@)사용
+로딩이 오래걸린다 했는데 요청 받을때마다 모델을 로딩하고 있었음
+이거 쓰면 서버켜질때만 모델 로딩하고 서버 꺼질 때 지가 알아서 정리한다함.
+잘한다 FastAPI
+"""
+@asynccontextmanager 
 async def lifespan(app: FastAPI):
     # 앱 시작 시 모델 및 메타데이터 로드
     print("Loading model and metadata...")
@@ -53,7 +58,7 @@ async def lifespan(app: FastAPI):
         else:
             state_dict = checkpoint
 
-        # .....? 아 이거 
+        #
         new_state_dict = OrderedDict()
         for k, v in state_dict.items():
             name = k[7:] if k.startswith('module.') else k
@@ -74,8 +79,9 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"Error loading model or metadata: {e}")
         
-    yield
-    # 앱 종료 시 정리
+    yield # 이 상태에서 서버가 요청 받으며 돌아감 △setup ▽loop
+
+    # 앱 종료 시, 전원 끄기전에 정리하는걸 애가 알아서 해줌 와 세상 좋아졌다.
     models.clear()
     print("Cleaned up resources.")
 
