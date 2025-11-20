@@ -81,7 +81,7 @@ async def lifespan(app: FastAPI):
         
     yield # 이 상태에서 서버가 요청 받으며 돌아감 △setup ▽loop
 
-    # 앱 종료 시, 전원 끄기전에 정리하는걸 애가 알아서 해줌 와 세상 좋아졌다.
+    # 앱 종료 시, 전원 끄기전에 정리하는걸 애가 알아서 해줌. 와
     models.clear()
     print("Cleaned up resources.")
 
