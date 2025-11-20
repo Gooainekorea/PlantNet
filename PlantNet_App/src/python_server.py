@@ -37,12 +37,12 @@ async def lifespan(app: FastAPI):
             print("Using CPU device.")
         models['device'] = device
 
-        # Load species names first to determine the number of classes and for later lookup
+        # 클래스 수 결정 및 종 이름 로드
         species_names_df = pd.read_csv(metadata_path / 'species_names.csv')
-        models['species_names_df'] = species_names_df  # Store the entire DataFrame
+        models['species_names_df'] = species_names_df  # DF저장
         num_classes = len(species_names_df)
         
-        # Load model
+        # 모델로드 
         model = alexnet(weights=AlexNet_Weights.DEFAULT)
         model.classifier[-1] = torch.nn.Linear(model.classifier[-1].in_features, num_classes)
         
@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI):
         else:
             state_dict = checkpoint
 
-        # Remove 'module.' prefix if it exists (from DataParallel saving)
+        # .....? 아 이거 
         new_state_dict = OrderedDict()
         for k, v in state_dict.items():
             name = k[7:] if k.startswith('module.') else k
