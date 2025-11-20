@@ -30,7 +30,7 @@ models = {}
 """
 @asynccontextmanager 
 async def lifespan(app: FastAPI):
-    # 앱 시작 시 모델 및 메타데이터 로드
+    # 앱 시작 시 모델 및 메타데이터 로드 (setup)
     print("Loading model and metadata...")
     try:
         # 사용 가능한 장치(GPU/CPU) 자동 감지
@@ -58,7 +58,11 @@ async def lifespan(app: FastAPI):
         else:
             state_dict = checkpoint
 
-        #
+        """
+        기존 PlantNet_ML에서 ModelManager 보면 로드도 하잖음?
+        근데 그때 model 때는거 구현 전에 가져와서 만든거라 흔적 남았음. 
+        혹시 나중에 환경 변화면 쓸지 몰라서 남김
+
         new_state_dict = OrderedDict()
         for k, v in state_dict.items():
             name = k[7:] if k.startswith('module.') else k
@@ -69,7 +73,7 @@ async def lifespan(app: FastAPI):
         model.eval()
 
         models['plant_model'] = model
-
+        """
         # Wikipedia and Translator API 객체 추가
         models['wiki_en'] = wikipediaapi.Wikipedia(user_agent='PlantNetApp/1.0', language='en')
         models['wiki_ko'] = wikipediaapi.Wikipedia(user_agent='PlantNetApp/1.0', language='ko')
