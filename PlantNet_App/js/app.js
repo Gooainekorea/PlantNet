@@ -27,7 +27,7 @@ let selectedFile = null;
 // 'default': 기본 식물 목록에서 선택한 파일
 let imageSourceType = null; 
 
-// Load plants from images/plants directory
+// 사진 가져와다 plant-grid에 사진 보여줌
 async function loadPlants() {
   try {
     const response = await fetch('/api/plants');

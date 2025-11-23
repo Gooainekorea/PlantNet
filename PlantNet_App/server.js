@@ -12,7 +12,6 @@ const pythonApiUrl = process.env.PYTHON_API_URL || 'http://localhost:5000/predic
 
 
 // QR 코드 업로드를 위한 임시 저장소
-// 실제 프로덕션 환경에서는 Redis나 다른 DB를 사용하는 것이 좋습니다.
 const mobileUploads = {};
 
 // 내부 IP 주소 가져오기
@@ -130,7 +129,7 @@ app.post('/api/analyze', upload.single('image'), async (req, res) => {
     res.json(response.data);
   } catch (error) {
     // console.error('Python API 호출 중 오류 발생:', error.message);
-    // res.status(500).json({ error: '분석 서버와 통신하는 데 실패했습니다.' });
+    // res.status(500).json({ error: '분석 서버와 통신하는 데 실패.' });
     // Python 서버(axios)에서 받은 오류를 더 상세하게 로깅하고 클라이언트에 전달
     if (error.response) {
       // Python 서버가 오류 응답을 반환한 경우 (4xx, 5xx)
