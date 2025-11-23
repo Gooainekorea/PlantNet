@@ -109,7 +109,7 @@ app.get('/api/check-upload/:sessionId', (req, res) => {
 });
 
 
-// 이미지 분석 API 엔드포인트. 여기서 에러 엄청남
+// 이미지 분석 API 엔드포인트. 여기서 파이썬 서버랑 연결이 안된다고 에러 엄청남 
 app.post('/api/analyze', upload.single('image'), async (req, res) => { //post 전송
   if (!req.file) {
     return res.status(400).json({ error: '이미지 파일이 필요합니다.' });
