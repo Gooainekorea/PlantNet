@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); // 1.pacakage.json 2. npm install express
 const fs = require('fs').promises;
 const path = require('path');
 const os = require('os');
