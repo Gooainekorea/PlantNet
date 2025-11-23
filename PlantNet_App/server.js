@@ -73,7 +73,7 @@ app.get('/api/qr-session', (req, res) => {
   res.json({ sessionId, serverIp, port });
 });
 
-// 모바일에서 업로드된 이미지를 임시 저장하는 API
+// 업로드된 이미지를 임시 저장하는 API
 app.post('/api/upload-from-mobile', upload.single('image'), (req, res) => {
   const { sessionId } = req.body;
   if (!req.file || !sessionId || !mobileUploads[sessionId]) {
