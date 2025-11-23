@@ -73,7 +73,7 @@ app.get('/api/qr-session', (req, res) => {
   res.json({ sessionId, serverIp, port });
 });
 
-// 업로드된 이미지를 임시 저장하는 API
+// 모바일에서 업로드된 이미지를 임시 저장하는 API
 app.post('/api/upload-from-mobile', upload.single('image'), (req, res) => {
   const { sessionId } = req.body;
   if (!req.file || !sessionId || !mobileUploads[sessionId]) {
@@ -84,8 +84,8 @@ app.post('/api/upload-from-mobile', upload.single('image'), (req, res) => {
   mobileUploads[sessionId] = {
     status: 'completed',
     file: {
-      buffer: req.file.buffer.toString('base64'), // 버퍼를 Base64 문자열로 변환
-      originalname: req.file.originalname,
+      buffer: req.file.buffer.toString('base64'), // 메모리에 업로드된 이미지를 Base64문자열로 변환해 저장 - 데이터 크기 33%증가. 다중 클라이어트 접속시 mobileUpload객체내에서 데이터를 메모리상에 저장해 서버부담 늘어남. 추후 수정 필요
+      originalname: req.file.originalname, //원본파일명
       mimetype: req.file.mimetype,
     }
   };
@@ -109,8 +109,8 @@ app.get('/api/check-upload/:sessionId', (req, res) => {
 });
 
 
-// 이미지 분석 API 엔드포인트
-app.post('/api/analyze', upload.single('image'), async (req, res) => {
+// 이미지 분석 API 엔드포인트. 여기서 에러 엄청남
+app.post('/api/analyze', upload.single('image'), async (req, res) => { //post 전송
   if (!req.file) {
     return res.status(400).json({ error: '이미지 파일이 필요합니다.' });
   }
