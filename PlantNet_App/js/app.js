@@ -174,7 +174,7 @@ async function analyzeImage(file) {
   return response.json();
 }
 
-// Reset button - show modal
+// Reset button - show modal 저장모달 경우의수 은근 어려움 이거 빗나간 조건이 있었는데
 resetBtn.addEventListener('click', () => {  
   // 사용자가 업로드한 이미지이고, 분석이 완료된 경우에만 저장 모달을 띄웁니다.
   if ((imageSourceType === 'user' || imageSourceType === 'mobile') && resultsContent.classList.contains('active')) {

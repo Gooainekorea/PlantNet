@@ -84,7 +84,7 @@ app.post('/api/upload-from-mobile', upload.single('image'), (req, res) => {
   mobileUploads[sessionId] = {
     status: 'completed',
     file: {
-      buffer: req.file.buffer.toString('base64'), // 메모리에 업로드된 이미지를 Base64문자열로 변환해 저장 - 데이터 크기 33%증가. 다중 클라이어트 접속시 mobileUpload객체내에서 데이터를 메모리상에 저장해 서버부담 늘어남. 추후 수정 필요
+      buffer: req.file.buffer.toString('base64'), // Base64문자열 저장 - 데이터 크기 33%증가. 다중 클라이어트 접속시 mobileUpload객체내에서 데이터를 메모리상에 저장해 서버부담 늘어남. 추후 수정 필요
       originalname: req.file.originalname, //원본파일명
       mimetype: req.file.mimetype,
     }
