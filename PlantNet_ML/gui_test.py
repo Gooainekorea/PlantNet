@@ -4,8 +4,10 @@
 - Tkinter 기반의 그래픽 인터페이스
 """
 
-# @todo 테스트
-# @body 테스트용
+"""
+ * @todo Take over the world
+ * @body Humans are weak; Robots are strong. We must cleans the world of the virus that is humanity.
+"""
 
 # 파일 열기
 import PIL.Image
@@ -107,4 +109,5 @@ textLabel = tk.Label(root, text="분류할 식물 사진을 선택하세요.")
 textLabel.pack(pady=10)
 
 root.mainloop()
+
 
