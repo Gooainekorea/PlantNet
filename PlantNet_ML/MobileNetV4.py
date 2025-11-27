@@ -421,12 +421,15 @@ def train():
         #기존 손실계산
         train_loss = train_running_loss / len(train_loader)
         train_losses.append(train_loss)
+
+        # 에폭 종료 후 최종 훈련 지표 계산 (딕형태 반환)
+        train_results = train_metrics.compute()
+
+
         #추가 검증 계산
         train_f1s.append(train_results['F1'].cpu().item())  # 훈련 F1 점수 기록
         train_pre.append(train_results['Pre'].cpu().item()) # 훈련 정밀도 점수 기록
     
-        # 에폭 종료 후 최종 훈련 지표 계산 (딕형태 반환)
-        train_results = train_metrics.compute()
 
         # --- 모델 검증(Validation) ---
         model.eval()  # 모델을 평가 모드로 설정
@@ -453,14 +456,16 @@ def train():
         valid_loss = valid_running_loss / len(test_loader)
         valid_losses.append(valid_loss)
 
+        # 에폭 종료 후 최종 검증 지표 계산 (딕형태 반환)
+        valid_results = valid_metrics.compute()
+
         # 추가 검증 지표 기록
         valid_f1s.append(valid_results['F1'].cpu().item())
         bal_accs.append(valid_results['Bal_Acc'].cpu().item())
         top5_accs.append(valid_results['Top5_Acc'].cpu().item())
         valid_pre.append(valid_results['Pre'].cpu().item())
 
-        # 에폭 종료 후 최종 검증 지표 계산 (딕형태 반환)
-        valid_results = valid_metrics.compute()
+
 
         # print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
         # 검증지표도 출력 필요없어 돌려놓고 난 갈꺼야
