@@ -334,12 +334,13 @@ if subset is not None: # 일부만 학습
     train_subset_indices = list(range(subset if subset < len(train_dataset) else len(train_dataset)))
     train_subset = Subset(train_dataset, train_subset_indices)
 
-
     test_subset_indices = list(range(subset if subset < len(test_dataset) else len(test_dataset)))
     test_subset = Subset(test_dataset, test_subset_indices)
 
 
 # DataLoader 생성 (데이터셋, 배치 크기, 셔플 여부, 워커 수 등 설정)
+# 뭐지 이거????? 내가했을때는 작동 됬었는데???? 아 에폭수를 착각했나봄
+
 train_loader = DataLoader(
     train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True
     )
@@ -424,7 +425,6 @@ def train():
 
         # 에폭 종료 후 최종 훈련 지표 계산 (딕형태 반환)
         train_results = train_metrics.compute()
-
 
         #추가 검증 계산
         train_f1s.append(train_results['F1'].cpu().item())  # 훈련 F1 점수 기록
