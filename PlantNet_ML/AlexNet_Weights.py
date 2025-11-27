@@ -1,4 +1,6 @@
 """
+파일명: AlexNet_Weights.py
+
 AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
 최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
 
@@ -48,7 +50,7 @@ from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, M
 base_input_path = '' # 기본입력경로
 input_path = f'{base_input_path}plantnet_300K/' # 데이터 폴더
 output_path = f'{base_input_path}output_data/' # 출력결과 
-images_path = f'{input_path}resized_images/' #이미지 경로
+images_path = f'{input_path}images_resized/' #이미지 경로
 
 metadata = pd.read_json(f'{output_path}metadata/metadata.json')
 
@@ -338,6 +340,7 @@ if subset is not None: # 일부만 학습
 
 
 # DataLoader 생성 (데이터셋, 배치 크기, 셔플 여부, 워커 수 등 설정)
+# 뭐지 이거????? 내가했을때는 작동 됬었는데???? 아 에폭수를 착각했나봄
 train_loader = DataLoader(
     train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True
     )
@@ -354,6 +357,12 @@ print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작�
 
 # ModelManager 인스턴스 생성
 save_best_model = ModelManager()
+metric_collection = MetricCollection({
+    'Pre': MulticlassPrecision(num_classes=num_classes, average='macro'), # MacroPre 라고 했다가 이상해서 그냥 그대로씀
+    'F1': MulticlassF1Score(num_classes=num_classes, average='macro'),
+    'Bal_Acc': MulticlassRecall(num_classes=num_classes, average='macro'),
+    'Top5_Acc': MulticlassAccuracy(num_classes=num_classes, top_k=5)
+}).to(device)
 
 def train():
     epochs = 50  # 총 에폭 수 설정 50 - 학습해봤더니 이정도로는 필요 없는듯
@@ -362,13 +371,6 @@ def train():
     돌리고 가면 내일 빨간약 먹을꺼 같은데.
     하.. 학습그래프 ...
     """
-    metric_collection = MetricCollection({
-        'Pre': MulticlassPrecision(num_classes=num_classes, average='macro'), # MacroPre 라고 했다가 이상해서 그냥 그대로씀
-        'F1': MulticlassF1Score(num_classes=num_classes, average='macro'),
-        'Bal_Acc': MulticlassRecall(num_classes=num_classes, average='macro'),
-        'Top5_Acc': MulticlassAccuracy(num_classes=num_classes, top_k=5)
-    }).to(device)
-
     train_metrics = metric_collection.clone() # 훈련용
     valid_metrics = metric_collection.clone() # 검증용
 
@@ -396,7 +398,7 @@ def train():
         train_metrics.reset() # 에폭 시작시 훈련 지표 초기화
 
         # tqdm을 사용해 진행률 표시
-        # prog_bar = tqdm(train_loader, desc="Training", leave=False)
+        prog_bar = tqdm(train_loader, desc="Training", leave=False)
         for i, data in enumerate(prog_bar):
             images, labels = data
             images = images.to(device)
@@ -419,13 +421,16 @@ def train():
         #기존 손실계산
         train_loss = train_running_loss / len(train_loader)
         train_losses.append(train_loss)
-        #추가 검증 계산
-        train_f1s.append(train_results['F1'].cpu().item())  # 훈련 F1 점수 기록
-        train_pre.append(train_results['Pre'].cpu().item()) # 훈련 정밀도 점수 기록
-    
+     
         # 에폭 종료 후 최종 훈련 지표 계산 (딕형태 반환)
         train_results = train_metrics.compute()
 
+        #추가 검증 계산
+        train_f1s.append(train_results['F1'].cpu().item())  # 훈련 F1 점수 기록
+        train_pre.append(train_results['Pre'].cpu().item()) # 훈련 정밀도 점수 기록
+
+        train_metrics.reset()  # 훈련 지표 초기화
+        
         # --- 모델 검증(Validation) ---
         model.eval()  # 모델을 평가 모드로 설정
         gpu_normalization.eval()
@@ -451,15 +456,15 @@ def train():
         valid_loss = valid_running_loss / len(test_loader)
         valid_losses.append(valid_loss)
 
+        # 에폭 종료 후 최종 검증 지표 계산 (딕형태 반환)
+        valid_results = valid_metrics.compute()
+
         # 추가 검증 지표 기록
         valid_f1s.append(valid_results['F1'].cpu().item())
         bal_accs.append(valid_results['Bal_Acc'].cpu().item())
         top5_accs.append(valid_results['Top5_Acc'].cpu().item())
         valid_pre.append(valid_results['Pre'].cpu().item())
-
-        # 에폭 종료 후 최종 검증 지표 계산 (딕형태 반환)
-        valid_results = valid_metrics.compute()
-
+        
         # print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
         # 검증지표도 출력 필요없어 돌려놓고 난 갈꺼야
         # print(f"\n[Epoch {epoch+1}] Summary:")
@@ -486,15 +491,15 @@ def train():
 
     # 평가 지표 그래프
     plt.figure(figsize=(10, 5))
-    # F1 train_f1s, valid_f1s
+    # F1 - train_f1s, valid_f1s
     plt.plot(train_f1s, color='red', linestyle='-', label='Train F1 (Macro)')
     plt.plot(valid_f1s, color='darkred', linestyle='--', label='Val F1 (Macro)')
-    # Pre pre
+    # Pre - pre
     plt.plot(train_pre, color='blue', linestyle='-', label='Train Precision (Macro)')
     plt.plot(valid_pre, color='darkblue', linestyle='--', label='Val Precision (Macro)')
-    # Bal_Acc bal_accs
+    # Bal_Acc - bal_accs
     plt.plot(bal_accs, color='orange', linestyle='-', label='Balanced Acc')
-    # Top5_Acc top5_accs
+    # Top5_Acc - top5_accs
     plt.plot(top5_accs, color='purple', linestyle='--', label='Top-5 Acc')
     
     plt.title('Evaluation Metrics History (F1, Accuracy)')

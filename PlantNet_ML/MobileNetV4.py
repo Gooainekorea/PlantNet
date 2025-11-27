@@ -1,28 +1,6 @@
 """
-파일명: AlexNet_Weights.py
+2025.11.27 
 
-AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
-최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
-
-- Kornia 라이브러리를 활용한 GPU가속 데이터 증강을 구현해 효율을 높임
-    학습을 위한 이미지 데이터 증강처리 - 뒤집기,회전,블러등 GPU에서 처리
-    -> CPU 병목 현상을 크게 줄임
-
-- 훈련 프로세스
-    손실함수(class_weights) : 클래스 샘플 수에 반비례
-    옵티마이저(Adam) : 학습률 감소, 가중치 감쇠
-    DataLoader의 num_workers, pin_memory로 CPU에서 GPU로 데이터 전송 최적화
-
-단순히 모델 학습 방향이 아닌 성능 향상을 위해
-비교가 필요해 평가지수 측정 추가
-
-torchmetrics 라이브러리 설치 (pip install torchmetrics, python -m pip install torchmetrics)
-
-Macro Precision : 각 클래스 별로 예측값중 정답인 비율을 계산후 평균을 냄 average='macro'
-Macro F1Score : Precision과 Recall의 조화평균
-Balanced Accuracy : 클래스 정확도를 평균냄
-Top-5 Accuracy : 다중 클래스에서 상위 5개 예측이 맞으면 정답으로 간주
-Confusion Matrix (오차 행렬) : 학습 종료시 이미지로 저장
 
 """
 import numpy as np
