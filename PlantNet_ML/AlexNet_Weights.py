@@ -1,7 +1,20 @@
 """
-2025.11.27
-MobileNetV4 모델로 변경 시도
-성능 향상을 위한 비교가 필요해 기존 모델에 평가지수 측정 추가
+파일명: plantnet_ML.py
+
+AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
+최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
+
+- Kornia 라이브러리를 활용한 GPU가속 데이터 증강을 구현해 효율을 높임
+    학습을 위한 이미지 데이터 증강처리 - 뒤집기,회전,블러등 GPU에서 처리
+    -> CPU 병목 현상을 크게 줄임
+
+- 훈련 프로세스
+    손실함수(class_weights) : 클래스 샘플 수에 반비례
+    옵티마이저(Adam) : 학습률 감소, 가중치 감쇠
+    DataLoader의 num_workers, pin_memory로 CPU에서 GPU로 데이터 전송 최적화
+
+단순히 모델 학습 방향이 아닌 성능 향상을 위해
+비교가 필요해 평가지수 측정 추가
 
 torchmetrics 라이브러리 설치 (pip install torchmetrics, python -m pip install torchmetrics)
 
@@ -9,6 +22,7 @@ Macro Precision : 각 클래스 별로 예측값중 정답인 비율을 계산�
 Macro F1Score : Precision과 Recall의 조화평균
 Balanced Accuracy : 클래스 정확도를 평균냄
 Top-5 Accuracy : 다중 클래스에서 상위 5개 예측이 맞으면 정답으로 간주
+Confusion Matrix (오차 행렬) : 학습 종료시 이미지로 저장
 
 """
 import numpy as np
@@ -29,6 +43,7 @@ from torch.utils.data import DataLoader, Subset
 import torch.optim as optim
 from tqdm import tqdm #실시간 진행 막대그래프
 from collections import Counter
+from torchmetrics import MetricCollection # ModelManager처럼 클래스 만들필요없음
 from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score, MulticlassAccuracy # 다중분류 평가 지표
 
 # config
@@ -295,7 +310,7 @@ gpu_augmentation = nn.Sequential(
 
 gpu_normalization = nn.Sequential(
     K.Normalize(mean=torch.tensor([0.485, 0.456, 0.406]), std=torch.tensor([0.229, 0.224, 0.225]))
-).to(device)
+).to(device) 
 
 #---------------------
 from torch.utils.data import DataLoader, Subset
@@ -344,8 +359,27 @@ save_best_model = ModelManager()
 
 def train():
     epochs = 50  # 총 에폭 수 설정 50 - 학습해봤더니 이정도로는 필요 없는듯
+    """
+    자... 손실 검증함수전에 평가지표도 정의해 줍시다 어짜피 이쯤오면 말투를 누가 보겠냐
+    돌리고 가면 내일 빨간약 먹을꺼 같은데.
+    하.. 학습그래프 ...
+    """
+    metric_collection = MetricCollection({
+        'Pre': MulticlassPrecision(num_classes=num_classes, average='macro'), # MacroPre 라고 했다가 이상해서 그냥 그대로씀
+        'F1': MulticlassF1Score(num_classes=num_classes, average='macro'),
+        'Bal_Acc': MulticlassRecall(num_classes=num_classes, average='macro'),
+        'Top5_Acc': MulticlassAccuracy(num_classes=num_classes, top_k=5)
+    }).to(device)
 
+    train_metrics = metric_collection.clone() # 훈련용
+    valid_metrics = metric_collection.clone() # 검증용
 
+    train_pre = [] 
+    valid_pre = []
+    train_f1s = [] 
+    valid_f1s = []
+    bal_accs = []
+    top5_accs = []
     train_losses = [] #훈련 손실 - 각 학습 단계에(ephoch) 에서 발생하는 오차, 학습 데이터에 대한 예측과 실제 타깃 값 간의 차이
     valid_losses = [] #검증 손실 - 모델이 새로운 데이터에 대해 얼마나 잘 대응하는지에 대한 기록
 
@@ -360,12 +394,16 @@ def train():
         model.train()  # 모델을 훈련 모드로 설정
         gpu_augmentation.train() # 증강 모듈드 휸련 모드로
         train_running_loss = 0.0
+
+        train_metrics.reset() # 에폭 시작시 훈련 지표 초기화
+
         # tqdm을 사용해 진행률 표시
-        prog_bar = tqdm(train_loader, desc="Training", leave=False)
+        # prog_bar = tqdm(train_loader, desc="Training", leave=False)
         for i, data in enumerate(prog_bar):
             images, labels = data
             images = images.to(device)
             labels = labels.to(device)
+
             images = gpu_augmentation(images) # gpu에서 블러등 처리 수행
 
             optimizer.zero_grad()  # 옵티마이저의 기울기 초기화
@@ -375,16 +413,28 @@ def train():
            
             loss.backward()  # 역전파를 통해 기울기 계산
             optimizer.step()  # 옵티마이저를 통해 가중치 업데이트
-           
+            
             train_running_loss += loss.item()
-           
+            
+            # 훈련 지표 측정기에 업데이트
+            train_metrics.update(outputs, labels)
+        #기존 손실계산
         train_loss = train_running_loss / len(train_loader)
         train_losses.append(train_loss)
-       
+        #추가 검증 계산
+        train_f1s.append(train_results['F1'].cpu().item())  # 훈련 F1 점수 기록
+        train_pre.append(train_results['Pre'].cpu().item()) # 훈련 정밀도 점수 기록
+    
+        # 에폭 종료 후 최종 훈련 지표 계산 (딕형태 반환)
+        train_results = train_metrics.compute()
+
         # --- 모델 검증(Validation) ---
         model.eval()  # 모델을 평가 모드로 설정
         gpu_normalization.eval()
         valid_running_loss = 0.0
+
+        valid_metrics.reset()  # 검증 지표 초기화
+        
         with torch.no_grad():  # 기울기 계산 비활성화
             prog_bar = tqdm(test_loader, desc="Validating", leave=False)
             for i, data in enumerate(prog_bar):
@@ -397,19 +447,34 @@ def train():
                 loss = criterion(outputs, labels)
                
                 valid_running_loss += loss.item()
-               
+
+                valid_metrics.update(outputs, labels) # 검증 지표 측정기에 업데이트
+        #기존 손실계산 
         valid_loss = valid_running_loss / len(test_loader)
         valid_losses.append(valid_loss)
-       
-        print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
-       
+
+        # 추가 검증 지표 기록
+        valid_f1s.append(valid_results['F1'].cpu().item())
+        bal_accs.append(valid_results['Bal_Acc'].cpu().item())
+        top5_accs.append(valid_results['Top5_Acc'].cpu().item())
+        valid_pre.append(valid_results['Pre'].cpu().item())
+
+        # 에폭 종료 후 최종 검증 지표 계산 (딕형태 반환)
+        valid_results = valid_metrics.compute()
+
+        # print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
+        # 검증지표도 출력 필요없어 돌려놓고 난 갈꺼야
+        # print(f"\n[Epoch {epoch+1}] Summary:")
+        # print(f"Loss     | Train: {train_loss:.4f} | Valid: {valid_loss:.4f}")
+        # print(f"F1-Score | Train: {train_results['F1']:.4f} | Valid: {valid_results['F1']:.4f}")
+        # print(f"Bal_Acc  | Train: {train_results['Bal_Acc']:.4f} | Valid: {valid_results['Bal_Acc']:.4f}")
+        # print(f"Top-5    | Train: {train_results['Top5_Acc']:.4f} | Valid: {valid_results['Top5_Acc']:.4f}")
+        # print(f"Precis'n | Train: {train_results['Pre']:.4f} | Valid: {valid_results['Pre']:.4f}")
+        # print("-" * 60)
         # 현재 에폭의 검증 손실을 기준으로 최고의 모델을 저장
         save_best_model(valid_loss, epoch, model, optimizer, criterion)
 
-
-
     print('훈련이 완료되었습니다.')
-
 
     # 훈련 과정의 손실 그래프 그리기
     plt.figure(figsize=(10, 7))
@@ -418,13 +483,32 @@ def train():
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig(f'{output_path}models/loss.png')
+    plt.savefig(f'{output_path}models/AlexNet_loss.png')
     plt.show()
 
+    # 평가 지표 그래프
+    plt.figure(figsize=(10, 5))
+    # F1 train_f1s, valid_f1s
+    plt.plot(train_f1s, color='red', linestyle='-', label='Train F1 (Macro)')
+    plt.plot(valid_f1s, color='darkred', linestyle='--', label='Val F1 (Macro)')
+    # Pre pre
+    plt.plot(train_pre, color='blue', linestyle='-', label='Train Precision (Macro)')
+    plt.plot(valid_pre, color='darkblue', linestyle='--', label='Val Precision (Macro)')
+    # Bal_Acc bal_accs
+    plt.plot(bal_accs, color='orange', linestyle='-', label='Balanced Acc')
+    # Top5_Acc top5_accs
+    plt.plot(top5_accs, color='purple', linestyle='--', label='Top-5 Acc')
+    
+    plt.title('Evaluation Metrics History (F1, Accuracy)')
+    plt.xlabel('Epochs')
+    plt.ylabel('Score (0.0 to 1.0)')
+    plt.legend()
+    # 저장
+    plt.savefig(f'{output_path}models/AlexNet_evaluation_metrics.png') 
+    plt.show()
 
-    print(f"손실 그래프가 {output_path}models/loss.png 에 저장되었습니다.")
-
-
+    print(f"손실 그래프가 {output_path}models/AlexNet_loss.png 에 저장되었습니다.")
+    print(f"평가 지표 그래프가 {output_path}models/AlexNet_evaluation_metrics.png 에 저장되었습니다.")
 #=================================================================================
 # 모델 저장
 if __name__ == '__main__':
