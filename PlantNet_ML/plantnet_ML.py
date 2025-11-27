@@ -278,12 +278,12 @@ params_to_update = filter(lambda p: p.requires_grad, model.parameters())
 optimizer = optim.Adam(params_to_update, lr=1e-5, weight_decay=5e-4)
 
 # ------------------------------------GPU가 담당할 증강 및 정규화 파이프라인 정의--
+"""
+GPU에서 실행할 이미지 증강 및 정규화 파이프라인
+PyTorch의 nn.Sequential - 신경망 레이어를 컨테이너 모듈로 관리하는 클래스
+증강처리 변환을 순차적으로 연결해 최종적으로 증강 및 정규화된 이미지 출력
+"""
 gpu_augmentation = nn.Sequential(
-    """
-    GPU에서 실행할 이미지 증강 및 정규화 파이프라인
-    PyTorch의 nn.Sequential - 신경망 레이어를 컨테이너 모듈로 관리하는 클래스
-    증강처리 변환을 순차적으로 연결해 최종적으로 증강 및 정규화된 이미지 출력
-    """
     # 사전 훈련 모델 사용시 반드시 해당 모델의 훈련에 사용됬던 것과 동일한 평균과 표준편차로 입력 이미지를 정규화 해야 한다.
     # 아니면 믿지못할 학습그래프가 나올것이다
     K.RandomHorizontalFlip(p=0.5), # 좌우 반전
@@ -312,11 +312,11 @@ test_subset = None
 
 
 if subset is not None: # 일부만 학습
-"""
-데이터가 너무 커서 일부만 테스트시키고 싶어서 만듦
-subset에 학습 시키고 싶은 데이터수를 넣으면 그만큼만 부분 집합 으로 학습시킴
-클래스와 상관없이 처음 부분부터 n개를 뽑아 학습시키기 때문에 테스트 용도로만 적합함 
-"""
+    """
+    데이터가 너무 커서 일부만 테스트시키고 싶어서 만듦
+    subset에 학습 시키고 싶은 데이터수를 넣으면 그만큼만 부분 집합 으로 학습시킴
+    클래스와 상관없이 처음 부분부터 n개를 뽑아 학습시키기 때문에 테스트 용도로만 적합함 
+    """
     print(f"subsetting data to {subset} results")
     train_subset_indices = list(range(subset if subset < len(train_dataset) else len(train_dataset)))
     train_subset = Subset(train_dataset, train_subset_indices)
