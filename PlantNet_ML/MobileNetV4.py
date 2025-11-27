@@ -1,17 +1,14 @@
 """
-파일명: plantnet_ML.py
+2025.11.27 
+MobileNetV4 모델로 변경 시도
+timm 라이브러리 설치 (pip install timm, python -m pip install timm)
+모델 목록 확인 model_names = timm.list_models('mobilenetv4*', pretrained=True) - 중복되어나옴
+나는 하이브리드가아닌 CNN기반으로 했으므로 Conv 계열 모델 사용
 
-AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
-최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
-
-- Kornia 라이브러리를 활용한 GPU가속 데이터 증강을 구현해 효율을 높임
-    학습을 위한 이미지 데이터 증강처리 - 뒤집기,회전,블러등 GPU에서 처리
-    -> CPU 병목 현상을 크게 줄임
-
-- 훈련 프로세스
-    손실함수(class_weights) : 클래스 샘플 수에 반비례
-    옵티마이저(Adam) : 학습률 감소, 가중치 감쇠
-    DataLoader의 num_workers, pin_memory로 CPU에서 GPU로 데이터 전송 최적화
+Small-Medium-Large 순으로 실행 
+Small   : mobilenetv4_conv_small.e2400_r224_in1k
+Medium  : mobilenetv4_conv_medium.e500_r224_in1k
+blur_medium   : mobilenetv4_conv_blur_medium.e500_r224_in1k
 
 """
 import numpy as np
@@ -433,5 +430,6 @@ if __name__ == '__main__':
     import torch.multiprocessing # 멀티 프로세싱 충돌 방지
     torch.multiprocessing.freeze_support()
     train()
+
 
 
