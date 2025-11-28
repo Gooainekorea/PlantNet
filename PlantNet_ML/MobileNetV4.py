@@ -114,8 +114,8 @@ class ModelManager:
             'optimizer_state_dict': optimizer.state_dict(),
             'loss_name': type(criterion).__name__,
             'loss_params': criterion.__dict__
-        }, best_model_path)
-        print(f"모델 저장 성공. 경로 : {best_model_path}")
+        }, f'{model_path}/AlexNet_model.pth')
+        print(f"모델 저장 성공. 경로 : {model_path}/AlexNet_model.pth")
 
     def load_best_model(self,model_path):
         """
@@ -331,7 +331,6 @@ test_loader = DataLoader(
 
 #----------------------------------------
 # 훈련 및 검증 로직
-print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
 
 # ModelManager 인스턴스 생성
 save_best_model = ModelManager()
@@ -362,6 +361,7 @@ def train():
     train_losses = [] #훈련 손실 - 각 학습 단계에(ephoch) 에서 발생하는 오차, 학습 데이터에 대한 예측과 실제 타깃 값 간의 차이
     valid_losses = [] #검증 손실 - 모델이 새로운 데이터에 대해 얼마나 잘 대응하는지에 대한 기록
 
+    print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
 
     for epoch in range(epochs):
         print(f"Epoch {epoch} of {epochs}")
