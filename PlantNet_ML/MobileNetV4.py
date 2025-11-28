@@ -1,14 +1,27 @@
 """
-파일명: MobileNetV4.py
+파일명: AlexNet_Weights.py
 
-2025.11.27 모델 학습의 안정성 확인. MobileNetV4 모델로 변경 시도
-timm 라이브러리 설치 (pip install timm, python -m pip install timm)
-모델 목록 확인 model_names = timm.list_models('mobilenetv4*', pretrained=True) - 중복되어나옴
-나는 하이브리드가아닌 CNN기반으로 했으므로 Conv 계열 모델 사용
+AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
+최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
 
-Small-Medium 성능비교
-Small   : mobilenetv4_conv_small.e2400_r224_in1k
-Medium  : mobilenetv4_conv_medium.e500_r224_in1k
+단순히 모델 학습 방향이 아닌 성능 향상을 위한 비교가 필요해 평가지수 측정 추가
+
+- Kornia 라이브러리를 활용한 GPU가속 데이터 증강을 구현해 효율을 높임
+    학습을 위한 이미지 데이터 증강처리 - 뒤집기,회전,블러등 GPU에서 처리
+    -> CPU 병목 현상을 크게 줄임
+
+- 훈련 프로세스
+    손실함수(class_weights) : 클래스 샘플 수에 반비례
+    옵티마이저(Adam) : 학습률 감소, 가중치 감쇠
+    DataLoader의 num_workers, pin_memory로 CPU에서 GPU로 데이터 전송 최적화
+    평가지표를 이용해 모델 성능 모니터링, 정체나 과적합시 동결 해제 
+
+torchmetrics 라이브러리 설치 (pip install torchmetrics, python -m pip install torchmetrics)
+Macro Precision : 각 클래스 별로 예측값중 정답인 비율을 계산후 평균을 냄 average='macro'
+Macro F1Score : Precision과 Recall의 조화평균
+Balanced Accuracy : 클래스 정확도를 평균냄
+Top-5 Accuracy : 다중 클래스에서 상위 5개 예측이 맞으면 정답으로 간주
+Confusion Matrix (오차 행렬) : 학습 종료시 이미지로 저장
 """
 import numpy as np
 import pandas as pd
@@ -239,16 +252,19 @@ class SaveModel:
     load : 저장된 모델 불러와 재사용
 
     """
-    def __init__(self, best_valid_loss=float('inf')):
+    # def __init__(self, best_valid_loss=float('inf')): # Loss 기준
+    def __init__(self, best_score=0.0): # F1 기준
         """
         생성자(초기화 함수)
         검증 손실 값 입력
 
         - best_valid_loss: 검증 손실 값 저장
+        - best_score: 성능 지표 값 저장
         - AlexNet_Weights: 모델 지정
         - len(species_idx["data"]): 분류 클래스 수 계산해 지정
         """
-        self.best_valid_loss = best_valid_loss
+        # self.best_valid_loss = best_valid_loss
+        self.best_score = best_score
         self.model_class = alexnet
         self.model_args = ()        
         self.model_kwargs = {'weights': AlexNet_Weights.DEFAULT}
@@ -271,12 +287,12 @@ class SaveModel:
 
         # 수정된 F1 기준 모델 저장
         # 성능 개선 안됨
-        if current_valid_loss <= self.best_valid_loss:
+        if current_valid_loss <= self.best_score:
             return False
         
         # 성능 개선됨 - 모델 저장
-        self.best_valid_loss = model.module.alexnet.state_dict()
-        print(f"\n모델 업데이트: {self.best_valid_loss}")
+        self.best_score = current_valid_loss
+        print(f"\n모델 업데이트: {self.best_score}")
         print(f"\n학습횟수: {epoch+1}\n")
     
         if hasattr(model, 'module'):
