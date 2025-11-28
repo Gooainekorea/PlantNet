@@ -1,7 +1,19 @@
 """
 파일명: AlexNet_Weights.py
 
-단순한 모델 학습이 아닌 성능 향상을 위한
+AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
+최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
+
+- Kornia 라이브러리를 활용한 GPU가속 데이터 증강을 구현해 효율을 높임
+    학습을 위한 이미지 데이터 증강처리 - 뒤집기,회전,블러등 GPU에서 처리
+    -> CPU 병목 현상을 크게 줄임
+
+- 훈련 프로세스
+    손실함수(class_weights) : 클래스 샘플 수에 반비례
+    옵티마이저(Adam) : 학습률 감소, 가중치 감쇠
+    DataLoader의 num_workers, pin_memory로 CPU에서 GPU로 데이터 전송 최적화
+
+단순히 모델 학습 방향이 아닌 성능 향상을 위해
 비교가 필요해 평가지수 측정 추가
 
 torchmetrics 라이브러리 설치 (pip install torchmetrics, python -m pip install torchmetrics)
@@ -124,8 +136,8 @@ class ModelManager:
             'optimizer_state_dict': optimizer.state_dict(),
             'loss_name': type(criterion).__name__,
             'loss_params': criterion.__dict__
-        }, best_model_path)
-        print(f"모델 저장 성공. 경로 : {best_model_path}")
+        }, f'{model_path}/AlexNet_model.pth')
+        print(f"모델 저장 성공. 경로 : {model_path}/AlexNet_model.pth")
 
     def load_best_model(self,model_path):
         """
@@ -275,8 +287,13 @@ model.to(device) # 모델을 디바이스로 이동
 # 동결이 해제된(학습이 필요한) 파라미터만 추려서 정의
 params_to_update = filter(lambda p: p.requires_grad, model.parameters())
 
+# 아 빨간약 먹었어
+
+# Adam 옵티마이저 정의 - 학습률과 가중치 감쇠 설정
 # e: 10의 거듭제곱. 1e-5 = 0.00001, 5e-4 = 0.0005
 optimizer = optim.Adam(params_to_update, lr=1e-5, weight_decay=5e-4)
+
+
 
 # ------------------------------------GPU가 담당할 증강 및 정규화 파이프라인 정의--
 """
@@ -317,6 +334,7 @@ if subset is not None: # 일부만 학습
     데이터가 너무 커서 일부만 테스트시키고 싶어서 만듦
     subset에 학습 시키고 싶은 데이터수를 넣으면 그만큼만 부분 집합 으로 학습시킴
     클래스와 상관없이 처음 부분부터 n개를 뽑아 학습시키기 때문에 테스트 용도로만 적합함 
+    안돌아가니 에폭을 줄이시길
     """
     print(f"subsetting data to {subset} results")
     train_subset_indices = list(range(subset if subset < len(train_dataset) else len(train_dataset)))
@@ -341,7 +359,6 @@ test_loader = DataLoader(
 
 #----------------------------------------
 # 훈련 및 검증 로직
-print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
 
 # ModelManager 인스턴스 생성
 save_best_model = ModelManager()
@@ -352,25 +369,27 @@ metric_collection = MetricCollection({
     'Top5_Acc': MulticlassAccuracy(num_classes=num_classes, top_k=5)
 }).to(device)
 
+
+
 def train():
     epochs = 50  # 총 에폭 수 설정 50 - 학습해봤더니 이정도로는 필요 없는듯
     """
-    자... 손실 검증함수전에 평가지표도 정의해 줍시다 어짜피 이쯤오면 말투를 누가 보겠냐
-    돌리고 가면 내일 빨간약 먹을꺼 같은데.
-    하.. 학습그래프 ...
+    모델 훈련 및 검증 함수
+    총 epochs 동안 모델 훈련 및 검증 수행
     """
     train_metrics = metric_collection.clone() # 훈련용
     valid_metrics = metric_collection.clone() # 검증용
 
-    train_pre = [] 
-    valid_pre = []
-    train_f1s = [] 
-    valid_f1s = []
-    bal_accs = []
-    top5_accs = []
-    train_losses = [] #훈련 손실 - 각 학습 단계에(ephoch) 에서 발생하는 오차, 학습 데이터에 대한 예측과 실제 타깃 값 간의 차이
-    valid_losses = [] #검증 손실 - 모델이 새로운 데이터에 대해 얼마나 잘 대응하는지에 대한 기록
+    train_pre = [] # 훈련 정밀도 기록 리스트
+    valid_pre = [] # 검증 정밀도 기록 리스트
+    train_f1s = [] # 훈련 F1 점수 기록 리스트
+    valid_f1s = [] # 검증 F1 점수 기록 리스트
+    bal_accs = [] # 검증 균형 정확도 기록 리스트
+    top5_accs = [] # 검증 Top-5 정확도 기록 리스트
+    train_losses = [] # 훈련 손실 기록 리스트
+    valid_losses = [] # 검증 손실 기록 리스트
 
+    print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
 
     for epoch in range(epochs):
         print(f"Epoch {epoch} of {epochs}")
@@ -384,7 +403,7 @@ def train():
         train_running_loss = 0.0
 
         train_metrics.reset() # 에폭 시작시 훈련 지표 초기화
-
+        
         # tqdm을 사용해 진행률 표시
         prog_bar = tqdm(train_loader, desc="Training", leave=False)
         for i, data in enumerate(prog_bar):
@@ -453,16 +472,15 @@ def train():
         top5_accs.append(valid_results['Top5_Acc'].cpu().item())
         valid_pre.append(valid_results['Pre'].cpu().item())
         
-        # print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
-        # 검증지표도 출력 필요없어 돌려놓고 난 갈꺼야
-        # print(f"\n[Epoch {epoch+1}] Summary:")
-        # print(f"Loss     | Train: {train_loss:.4f} | Valid: {valid_loss:.4f}")
-        # print(f"F1-Score | Train: {train_results['F1']:.4f} | Valid: {valid_results['F1']:.4f}")
-        # print(f"Bal_Acc  | Train: {train_results['Bal_Acc']:.4f} | Valid: {valid_results['Bal_Acc']:.4f}")
-        # print(f"Top-5    | Train: {train_results['Top5_Acc']:.4f} | Valid: {valid_results['Top5_Acc']:.4f}")
-        # print(f"Precis'n | Train: {train_results['Pre']:.4f} | Valid: {valid_results['Pre']:.4f}")
-        # print("-" * 60)
-        # 현재 에폭의 검증 손실을 기준으로 최고의 모델을 저장
+        print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
+        print(f"\n[Epoch {epoch+1}] Summary:")
+        print(f"Loss     | Train: {train_loss:.4f} | Valid: {valid_loss:.4f}")
+        print(f"F1-Score | Train: {train_results['F1']:.4f} | Valid: {valid_results['F1']:.4f}")
+        print(f"Bal_Acc  | Train: {train_results['Bal_Acc']:.4f} | Valid: {valid_results['Bal_Acc']:.4f}")
+        print(f"Top-5    | Train: {train_results['Top5_Acc']:.4f} | Valid: {valid_results['Top5_Acc']:.4f}")
+        print(f"Precis'n | Train: {train_results['Pre']:.4f} | Valid: {valid_results['Pre']:.4f}")
+        print("-" * 60)
+        #현재 에폭의 검증 손실을 기준으로 최고의 모델을 저장
         save_best_model(valid_loss, epoch, model, optimizer, criterion)
 
     print('훈련이 완료되었습니다.')
