@@ -4,7 +4,7 @@
 AlexNet_Weights 모델의 모든 가중치 동결해 이미지 처리 부분 학습 특성을 유지,
 최종 분류 레이어의 클래스 수에 맞게 재설계해 전이 학습 구현.
 
-단순히 모델 학습 방향이 아닌 성능 향상을 위한 비교가 필요해 평가지수 측정 추가
+단순히 모델 학습 방향이 아닌 성능 향상 측정을 위한 비교가 필요해 평가지수 추가
 
 - Kornia 라이브러리를 활용한 GPU가속 데이터 증강을 구현해 효율을 높임
     학습을 위한 이미지 데이터 증강처리 - 뒤집기,회전,블러등 GPU에서 처리
@@ -22,6 +22,9 @@ Macro F1Score : Precision과 Recall의 조화평균
 Balanced Accuracy : 클래스 정확도를 평균냄
 Top-5 Accuracy : 다중 클래스에서 상위 5개 예측이 맞으면 정답으로 간주
 Confusion Matrix (오차 행렬) : 학습 종료시 이미지로 저장
+
+악 속도, 크기, 연산량을 잊었어
+
 """
 import numpy as np
 import pandas as pd
@@ -43,6 +46,8 @@ from tqdm import tqdm #실시간 진행 막대그래프
 from collections import Counter
 from torchmetrics import MetricCollection # SaveModel처럼 클래스 만들필요없음
 from torchmetrics.classification import MulticlassPrecision, MulticlassRecall, MulticlassF1Score, MulticlassAccuracy # 다중분류 평가 지표
+import time 
+from thop import profile, clever_format # 모델 플롭스 계산
 
 # config
 base_input_path = '' # 기본입력경로
@@ -203,13 +208,14 @@ class FineTuneAlexNet(nn.Module):
         # Val_F1기준 정체 판단
         for i in range(1, len(recent)):
             if recent[i] <= recent[i - 1]: 
-                is_plateau = False
+                print("성능이 개선 되지 않아 모델이 저장되지 않았습니다.")
+                is_plateau = True
                 break
 
         # # Loss 기준 정체 판단
         # for i in range(1, len(recent)):
         #     if recent[i] >= recent[i - 1]: 
-        #         is_plateau = False
+        #         is_plateau = True
         #         break
         
         return is_plateau
@@ -251,16 +257,19 @@ class SaveModel:
     load : 저장된 모델 불러와 재사용
 
     """
-    def __init__(self, best_valid_loss=float('inf')):
+    # def __init__(self, best_valid_loss=float('inf')): # Loss 기준
+    def __init__(self, best_score=0.0): # F1 기준
         """
         생성자(초기화 함수)
         검증 손실 값 입력
 
         - best_valid_loss: 검증 손실 값 저장
+        - best_score: 성능 지표 값 저장
         - AlexNet_Weights: 모델 지정
         - len(species_idx["data"]): 분류 클래스 수 계산해 지정
         """
-        self.best_valid_loss = best_valid_loss
+        # self.best_valid_loss = best_valid_loss
+        self.best_score = best_score
         self.model_class = alexnet
         self.model_args = ()        
         self.model_kwargs = {'weights': AlexNet_Weights.DEFAULT}
@@ -283,12 +292,12 @@ class SaveModel:
 
         # 수정된 F1 기준 모델 저장
         # 성능 개선 안됨
-        if current_valid_loss <= self.best_valid_loss:
+        if current_valid_loss <= self.best_score:
             return False
         
         # 성능 개선됨 - 모델 저장
-        self.best_valid_loss = model.module.alexnet.state_dict()
-        print(f"\n모델 업데이트: {self.best_valid_loss}")
+        self.best_score = current_valid_loss
+        print(f"\n모델 업데이트: {self.best_score}")
         print(f"\n학습횟수: {epoch+1}\n")
     
         if hasattr(model, 'module'):
@@ -378,6 +387,59 @@ test_loader = DataLoader(
 #----------------------------------------
 # 훈련 및 검증 로직
 
+# 모델 효율성 측정 함수
+def model_info(model, device, input_size=(1, 3, 224, 224)):
+    """
+    모델 최적화 비교를 위한 정량적 지표(Params, FLOPs, FPS) 측정 및 출력
+    """
+    model.eval()
+    model.to(device)
+    dummy_input = torch.randn(input_size).to(device)
+
+    print(f"{'-'*40}")
+
+    # 1. 파라미터 및 연산량 (thop 이용)
+    try:
+        # thop.profile은 잡음(출력)이 좀 있어서 verbose=False 추천
+        macs, params = profile(model, inputs=(dummy_input, ), verbose=False)
+        flops = macs * 2 # 통상적으로 FLOPs는 MACs의 2배
+        
+        # 보기 좋게 포맷팅 (예: 10000 -> 10K)
+        flops_str, params_str = clever_format([flops, params], "%.2f")
+        print(f"   - 크기           : {params_str}")
+        print(f"   - 연산량         : {flops_str}")
+    except Exception as e:
+        print(f" thop 라이브러리 에러: {e}")
+
+    # 2. 메모리 사용량 (근사치)
+    total_params = sum(p.numel() for p in model.parameters())
+    memory_mb = total_params * 4 / (1024 ** 2) # Float32 기준
+    print(f"   - 메모리 사용량  : {memory_mb:.2f} MB (Only Weights)")
+
+    # 3. 추론 속도 (FPS)
+    print(f"추론 속도")
+    
+    # 웜업 (Warm-up)
+    with torch.no_grad():
+        for _ in range(10):
+            _ = model(dummy_input)
+
+    # 실제 측정 (반복 100회)
+    iterations = 100
+    start_time = time.time()
+    with torch.no_grad():
+        for _ in range(iterations):
+            _ = model(dummy_input)
+            if device.type == 'cuda':
+                torch.cuda.synchronize() # GPU 시간 동기화 필수
+    end_time = time.time()
+
+    avg_time = (end_time - start_time) / iterations
+    fps = 1 / avg_time
+    
+    print(f"   - 지연시간       : {avg_time*1000:.4f} ms")
+    print(f"   - 속도           : {fps:.2f} frames/sec")
+    print(f"{'-'*40}\n")
 
 
 # SaveModel 인스턴스 생성
@@ -402,6 +464,8 @@ def train():
 
     # 모델 생성
     model = FineTuneAlexNet(num_classes, class_counts, device)
+    # 모델 효율성 측정
+    model_info()(model, device)
     
     train_metrics = metric_collection.clone() # 훈련용
     valid_metrics = metric_collection.clone() # 검증용
@@ -416,6 +480,7 @@ def train():
     valid_losses = [] # 검증 손실 기록 리스트
 
     print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
+    print("레이어 단계: 0")
 
     for epoch in range(epochs):
         print(f"Epoch {epoch} of {epochs}")
@@ -430,7 +495,7 @@ def train():
         gpu_augmentation.train() # 증강 모듈드 휸련 모드로
         train_running_loss = 0.0
         train_metrics.reset() # 에폭 시작시 훈련 지표 초기화
-        save_best_model = save_best_model(valid_loss, epoch, model, model.optimizer, model.criterion)
+        # save_best_model = save_best_model(valid_loss, epoch, model, model.optimizer, model.criterion)
 
 
         # tqdm을 사용해 진행률 표시
@@ -516,7 +581,6 @@ def train():
         if save_model:
             print("모델 성능 개선으로 모델이 저장되었습니다.")
         else:
-            print("성능이 개선 되지 않아 모델이 저장되지 않았습니다.")
             # 학습 정체 감지
             if model.detect_learning_plateau(valid_f1s):
                 model_unfrozen = model.unfreeze_layers()
@@ -543,15 +607,15 @@ def train():
     # 평가 지표 그래프
     plt.figure(figsize=(10, 5))
     # F1 - train_f1s, valid_f1s
-    plt.plot(train_f1s, color='red', linestyle='-', label='Train F1 (Macro)')
-    plt.plot(valid_f1s, color='darkred', linestyle='--', label='Val F1 (Macro)')
+    plt.plot(train_f1s, color='lightcoral', linestyle='-', label='Train F1 (Macro)')
+    plt.plot(valid_f1s, color='red', linestyle='--', label='Val F1 (Macro)')
     # Pre - pre
-    plt.plot(train_pre, color='blue', linestyle='-', label='Train Precision (Macro)')
-    plt.plot(valid_pre, color='darkblue', linestyle='--', label='Val Precision (Macro)')
+    plt.plot(train_pre, color='lightsteelblue', linestyle='-', label='Train Precision (Macro)')
+    plt.plot(valid_pre, color='blue', linestyle='--', label='Val Precision (Macro)')
     # Bal_Acc - bal_accs
-    plt.plot(bal_accs, color='orange', linestyle='-', label='Balanced Acc')
+    plt.plot(bal_accs, color='black', linestyle='-', label='Balanced Acc')
     # Top5_Acc - top5_accs
-    plt.plot(top5_accs, color='purple', linestyle='--', label='Top-5 Acc')
+    plt.plot(top5_accs, color='dimgrey', linestyle='--', label='Top-5 Acc')
     
     plt.title('Evaluation Metrics History (F1, Accuracy)')
     plt.xlabel('Epochs')
@@ -563,11 +627,13 @@ def train():
 
     print(f"손실 그래프가 {output_path}models/AlexNet_loss.png 에 저장되었습니다.")
     print(f"평가 지표 그래프가 {output_path}models/AlexNet_evaluation_metrics.png 에 저장되었습니다.")
+
 #=================================================================================
 # 메인 실행
 if __name__ == '__main__':
     import torch.multiprocessing # 멀티 프로세싱 충돌 방지
     torch.multiprocessing.freeze_support()
     train()
+
 
 
