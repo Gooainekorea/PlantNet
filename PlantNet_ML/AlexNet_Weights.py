@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 import kornia.augmentation as K # GPU가속!!!!! 제발!!!! 아니 너무느려!!!!!!
 import cv2
 import os
-import random
+import logging
 import torch # pythorch pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 import torch.nn as nn # 신경망 구성요소 및 모듈 제공
 from torchvision.models import alexnet, AlexNet_Weights # 사전학습 모델 불러옴
@@ -80,9 +80,32 @@ plt.style.use('ggplot')
 model_path = os.path.join(output_path, 'models')
 os.makedirs(model_path, exist_ok=True)
 best_model_path = os.path.join(model_path, 'best_model.pth')
+log_path = f'{output_path}models/AlexNet_training_log.txt'
+os.makedirs(f'{output_path}models/', exist_ok=True)
 
 # 디바이스 설정 (GPU 사용 가능 시 GPU, 아니면 CPU)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+# 로거 설정 (터미널 출력 기록)
+logger = logging.getLogger('model_training')
+logger.setLevel(logging.INFO)
+
+# 기존 핸들러가 있으면 제거 (중복 출력 방지)
+if logger.hasHandlers():
+    logger.handlers.clear()
+
+# 파일 핸들러 (파일에 저장)
+file_handler = logging.FileHandler(log_path)
+file_formatter = logging.Formatter('%(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
+# 스트림 핸들러 (터미널 출력)
+stream_handler = logging.StreamHandler()
+stream_formatter = logging.Formatter('%(message)s') 
+stream_handler.setFormatter(stream_formatter)
+logger.addHandler(stream_handler)
+
 
 # 이미지 전처리 및 증강처리----------------------------------------
 
@@ -203,13 +226,14 @@ class FineTuneAlexNet(nn.Module):
         
         # 최근 patience + 1개 지표가 모두 이전 것과 같거나 나쁜지 확인
         recent = e_metric[-(self.patience + 1):]
+
+        # 기본값
         is_plateau = True
 
         # Val_F1기준 정체 판단
         for i in range(1, len(recent)):
-            if recent[i] <= recent[i - 1]: 
-                print("성능이 개선 되지 않아 모델이 저장되지 않았습니다.")
-                is_plateau = True
+            if recent[i] > recent[i - 1]: 
+                is_plateau = False
                 break
 
         # # Loss 기준 정체 판단
@@ -217,7 +241,8 @@ class FineTuneAlexNet(nn.Module):
         #     if recent[i] >= recent[i - 1]: 
         #         is_plateau = True
         #         break
-        
+        if is_plateau:
+            logger.info("성능이 개선 되지 않아 모델이 저장되지 않았습니다.")
         return is_plateau
     
     def unfreeze_layers(self):
@@ -240,7 +265,7 @@ class FineTuneAlexNet(nn.Module):
             self.lr = self.lr * self.decay_factor 
 
         else:# 종료
-            print("모든 레이어가 동결 해제 되었습니다. 추가 동결 해제는 불가능합니다.")
+            logger.info("모든 레이어가 동결 해제 되었습니다. 추가 동결 해제는 불가능합니다.")
             return False  
 
         # 변경된 파라미터와 학습률로 옵티마이저 재설정
@@ -297,8 +322,8 @@ class SaveModel:
         
         # 성능 개선됨 - 모델 저장
         self.best_score = current_valid_loss
-        print(f"\n모델 업데이트: {self.best_score}")
-        print(f"\n학습횟수: {epoch+1}\n")
+        logger.info(f"\n모델 업데이트: {self.best_score}")
+        logger.info(f"\n학습횟수: {epoch+1}\n")
     
         if hasattr(model, 'module'):
             model_state_dict = model.module.state_dict()
@@ -312,7 +337,7 @@ class SaveModel:
             'loss_name': type(criterion).__name__,
             'loss_params': criterion.__dict__
         }, f'{model_path}/AlexNet_model.pth')
-        print(f"모델 저장 성공. 경로 : {model_path}/AlexNet_model.pth")
+        logger.info(f"모델 저장 성공. 경로 : {model_path}/AlexNet_model.pth")
         return True
     
         # # 기존 손실 기준 모델 저장
@@ -322,8 +347,8 @@ class SaveModel:
         
         # # 성능 개선됨 - 모델 저장
         # self.best_valid_loss = current_valid_loss
-        # print(f"\nBest validation loss: {self.best_valid_loss}")
-        # print(f"\nSaving best model for epoch: {epoch+1}\n")
+        # logger.info(f"\nBest validation loss: {self.best_valid_loss}")
+        # logger.info(f"\nSaving best model for epoch: {epoch+1}\n")
     
         # if hasattr(model, 'module'):
         #     model_state_dict = model.module.state_dict()
@@ -337,11 +362,8 @@ class SaveModel:
         #     'loss_name': type(criterion).__name__,
         #     'loss_params': criterion.__dict__
         # }, f'{model_path}/AlexNet_model.pth')
-        # print(f"모델 저장 성공. 경로 : {model_path}/AlexNet_model.pth")
+        # logger.info(f"모델 저장 성공. 경로 : {model_path}/AlexNet_model.pth")
         # return True
-
-
-
 
 
 #---------------------
@@ -363,7 +385,7 @@ if subset is not None: # 일부만 학습
     클래스와 상관없이 처음 부분부터 n개를 뽑아 학습시키기 때문에 테스트 용도로만 적합함 
     안돌아가니 에폭을 줄이시길
     """
-    print(f"subsetting data to {subset} results")
+    logger.info(f"subsetting data to {subset} results")
     train_subset_indices = list(range(subset if subset < len(train_dataset) else len(train_dataset)))
     train_subset = Subset(train_dataset, train_subset_indices)
 
@@ -396,7 +418,7 @@ def model_info(model, device, input_size=(1, 3, 224, 224)):
     model.to(device)
     dummy_input = torch.randn(input_size).to(device)
 
-    print(f"{'-'*40}")
+    logger.info(f"{'-'*40}")
 
     # 1. 파라미터 및 연산량 (thop 이용)
     try:
@@ -406,18 +428,18 @@ def model_info(model, device, input_size=(1, 3, 224, 224)):
         
         # 보기 좋게 포맷팅 (예: 10000 -> 10K)
         flops_str, params_str = clever_format([flops, params], "%.2f")
-        print(f"   - 크기           : {params_str}")
-        print(f"   - 연산량         : {flops_str}")
+        logger.info(f"   - 크기           : {params_str}")
+        logger.info(f"   - 연산량         : {flops_str}")
     except Exception as e:
-        print(f" thop 라이브러리 에러: {e}")
+        logger.info(f" thop 라이브러리 에러: {e}")
 
     # 2. 메모리 사용량 (근사치)
     total_params = sum(p.numel() for p in model.parameters())
     memory_mb = total_params * 4 / (1024 ** 2) # Float32 기준
-    print(f"   - 메모리 사용량  : {memory_mb:.2f} MB (Only Weights)")
+    logger.info(f"   - 메모리 사용량  : {memory_mb:.2f} MB (Only Weights)")
 
     # 3. 추론 속도 (FPS)
-    print(f"추론 속도")
+    logger.info(f"추론 속도")
     
     # 웜업 (Warm-up)
     with torch.no_grad():
@@ -437,10 +459,9 @@ def model_info(model, device, input_size=(1, 3, 224, 224)):
     avg_time = (end_time - start_time) / iterations
     fps = 1 / avg_time
     
-    print(f"   - 지연시간       : {avg_time*1000:.4f} ms")
-    print(f"   - 속도           : {fps:.2f} frames/sec")
-    print(f"{'-'*40}\n")
-
+    logger.info(f"   - 지연시간       : {avg_time*1000:.4f} ms")
+    logger.info(f"   - 속도           : {fps:.2f} frames/sec")
+    logger.info(f"{'-'*40}\n")
 
 # SaveModel 인스턴스 생성
 save_best_model = SaveModel()
@@ -465,7 +486,7 @@ def train():
     # 모델 생성
     model = FineTuneAlexNet(num_classes, class_counts, device)
     # 모델 효율성 측정
-    model_info()(model, device)
+    model_info(model, device)
     
     train_metrics = metric_collection.clone() # 훈련용
     valid_metrics = metric_collection.clone() # 검증용
@@ -479,16 +500,12 @@ def train():
     train_losses = [] # 훈련 손실 기록 리스트
     valid_losses = [] # 검증 손실 기록 리스트
 
-    print("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
-    print("레이어 단계: 0")
+    logger.info("\n스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.")
+    logger.info("레이어 단계: 0")
 
     for epoch in range(epochs):
-        print(f"Epoch {epoch} of {epochs}")
-        """
-        --- 모델 훈련(Training) ---
-        - 총 epochs 동안 반복 합습
-        - 각 epoch마다 훈련/검증 손실 계산
-        """
+        logger.info(f"Epoch {epoch} of {epochs}")
+
         model_lr = model.optimizer.param_groups[0]['lr'] # 현재 학습률
 
         model.train()  # 모델을 훈련 모드로 설정
@@ -522,8 +539,7 @@ def train():
         #기존 손실계산
         train_loss = train_running_loss / len(train_loader)
         train_losses.append(train_loss)
-        train_loss = train_running_loss / len(train_loader)
-        train_losses.append(train_loss)
+
      
         # 에폭 종료 후 최종 훈련 지표 계산 (딕형태 반환)
         train_results = train_metrics.compute()
@@ -534,7 +550,7 @@ def train():
 
         train_metrics.reset()  # 훈련 지표 초기화
         
-        # --- 모델 검증(Validation) ---
+        # 모델 검증
         model.eval()  # 모델을 평가 모드로 설정
         gpu_normalization.eval()
         valid_metrics.reset()  # 검증 지표 초기화
@@ -567,32 +583,32 @@ def train():
         top5_accs.append(valid_results['Top5_Acc'].item())
         valid_pre.append(valid_results['Pre'].item())
         
-        print(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
-        print(f"\n[Epoch {epoch+1}] Summary:")
-        print(f"Loss     | Train: {train_loss:.4f} | Valid: {valid_loss:.4f}")
-        print(f"F1-Score | Train: {train_results['F1']:.4f} | Valid: {valid_results['F1']:.4f}")
-        print(f"Bal_Acc  | Train: {train_results['Bal_Acc']:.4f} | Valid: {valid_results['Bal_Acc']:.4f}")
-        print(f"Top-5    | Train: {train_results['Top5_Acc']:.4f} | Valid: {valid_results['Top5_Acc']:.4f}")
-        print(f"Precis'n | Train: {train_results['Pre']:.4f} | Valid: {valid_results['Pre']:.4f}")
-        print("-" * 60)
+        logger.info(f"Training Loss: {train_loss:.4f}, Validation Loss: {valid_loss:.4f}")
+        logger.info(f"\n[Epoch {epoch+1}] Summary:")
+        logger.info(f"Loss     | Train: {train_loss:.4f} | Valid: {valid_loss:.4f}")
+        logger.info(f"F1-Score | Train: {train_results['F1']:.4f} | Valid: {valid_results['F1']:.4f}")
+        logger.info(f"Bal_Acc  | Train: {train_results['Bal_Acc']:.4f} | Valid: {valid_results['Bal_Acc']:.4f}")
+        logger.info(f"Top-5    | Train: {train_results['Top5_Acc']:.4f} | Valid: {valid_results['Top5_Acc']:.4f}")
+        logger.info(f"Precis'n | Train: {train_results['Pre']:.4f} | Valid: {valid_results['Pre']:.4f}")
+        logger.info("-" * 60)
 
         # 학습 정체 감지를 위해 저장시도
         save_model = save_best_model(valid_results['F1'].item(), epoch, model, model.optimizer, model.criterion)
         if save_model:
-            print("모델 성능 개선으로 모델이 저장되었습니다.")
+            logger.info("모델 성능 개선으로 모델이 저장되었습니다.")
         else:
             # 학습 정체 감지
             if model.detect_learning_plateau(valid_f1s):
                 model_unfrozen = model.unfreeze_layers()
                 # 레이어 동결 해제
                 if model_unfrozen:
-                    print(f"레이어 동결해제 성공. 단계 : {model.stage}. 학습률이 {model.lr}로 감소되었습니다.")
+                    logger.info(f"레이어 동결해제 성공. 단계 : {model.stage}. 학습률이 {model.lr}로 감소되었습니다.")
                 else:
                     # 모든 레이어가 동결 해제된 상태
-                    print("학습을 종료합니다.")
+                    logger.info("학습을 종료합니다.")
                     break  
 
-    print('훈련이 완료되었습니다.')
+    logger.info('훈련이 완료되었습니다.')
 
     # 훈련 과정의 손실 그래프 그리기
     plt.figure(figsize=(10, 7))
@@ -602,7 +618,8 @@ def train():
     plt.ylabel('Loss')
     plt.legend()
     plt.savefig(f'{output_path}models/AlexNet_loss.png')
-    plt.show()
+    # plt.show()
+    plt.close()
 
     # 평가 지표 그래프
     plt.figure(figsize=(10, 5))
@@ -623,10 +640,11 @@ def train():
     plt.legend()
     # 저장
     plt.savefig(f'{output_path}models/AlexNet_evaluation_metrics.png') 
-    plt.show()
+    # plt.show()
+    plt.close()
 
-    print(f"손실 그래프가 {output_path}models/AlexNet_loss.png 에 저장되었습니다.")
-    print(f"평가 지표 그래프가 {output_path}models/AlexNet_evaluation_metrics.png 에 저장되었습니다.")
+    logger.info(f"손실 그래프가 {output_path}models/AlexNet_loss.png 에 저장되었습니다.")
+    logger.info(f"평가 지표 그래프가 {output_path}models/AlexNet_evaluation_metrics.png 에 저장되었습니다.")
 
 #=================================================================================
 # 메인 실행
