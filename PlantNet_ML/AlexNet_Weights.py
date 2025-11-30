@@ -116,6 +116,7 @@ simple_transform = transforms.Compose([ # CPU가 담당하는 변환부분
 
 # 데이터셋 정의
 # transform에 클래스의 인스턴스를 전달. CPU 변환만 적용
+# 아ㅋㅋㅋㅋㅋㅋ
 train_dataset = datasets.ImageFolder( # 트레이닝 데이터
     root=f'{images_path}train/',
     transform=simple_transform 
