@@ -3,6 +3,7 @@
     메타데이터 : https://lab.plantnet.org/seafile/d/bed81bc15e8944969cf6/
 
 1. 장치관리자 or  작업관리자에서 그래픽카드확인
+
 1. https://www.nvidia.com/en-us/drivers/ 에서 그래픽 카드에 맞는 드라이버 설치.
     Game Ready는 신규 게임 최적화를 위해 업데이트가 잦음
     Studio 작업용. 안정성을 중시
@@ -29,4 +30,3 @@
     > 통신사, 백본, 지역 PoP 문제면 내가 해결할 수 없기 때문에 USB에 담겨진게 있는지 확인
     - 내가 USB에 백업파일 만들어놓는걸 참좋아하는데.... 이건 없네...
 
-    
