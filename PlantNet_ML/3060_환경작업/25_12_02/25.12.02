@@ -9,6 +9,16 @@
 
 
 1. PyTorch 설치 https://pytorch.org/get-started/locally
-- 가상환경에 설치해 줍니다.
+- 가상환경에 설치.
+
+1. requirements.txt(설치라이브러리)작성
+- 생성 및 덮어쓰기
+    `pip freeze > requirements.txt`
+- 실행
+    `pip install -r requirements.txt`
+- 일괄삭제
+    `pip uninstall -r requirements.txt -y`
+- 파일 자체 삭제(Win/PowerShell)
+    `del requirements.txt`
 
 1. 파일 생성, 경로설정
