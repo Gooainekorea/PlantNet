@@ -15,7 +15,17 @@
 1. CUDA버전과 호환되는 Python 설치 
 - PyTorch 다운링크(https://pytorch.org/get-started/locally)에 3.9-3.13만 지원한다고 안내되어있다.
 
-1. pip update
+1. pip install --upgrade pip
+
+1. 가상환경 생성
+- 파워쉘 관리자 권한으로 열고 가상환경을 만들어줄 파일로 이동
+    'Set-ExecutionPolicy RemoteSigned -Scope CurrentUser' 인터넷에서 다운로드 된 스크립트는 서명 필요
+    'Set-ExecutionPolicy Unrestricted -Scope CurrentUser' 모든 스크립트 실행 허용 <- 난 이걸로함
+
+1. 생성
+    python -m venv .venv
+    .\.venv\Scripts\Activate.ps1
+
 
 1. PyTorch 설치 https://pytorch.org/get-started/locally
 
