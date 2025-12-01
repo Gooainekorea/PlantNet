@@ -58,7 +58,7 @@ def show_tensor_image(tensor):
     plt.axis('off')  # To hide axis values
     plt.show()
 
-# 고집부리지말고 그냥 csv파일 불러다할껄
+
 #--------------------------------------------------------------
 plt.style.use('ggplot')
 
