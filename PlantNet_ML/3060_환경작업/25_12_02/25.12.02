@@ -10,3 +10,5 @@
 
 1. PyTorch 설치 https://pytorch.org/get-started/locally
 - 가상환경에 설치해 줍니다.
+
+1. 파일 생성, 경로설정

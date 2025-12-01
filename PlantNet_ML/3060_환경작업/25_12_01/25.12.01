@@ -8,7 +8,7 @@
     Game Ready는 신규 게임 최적화를 위해 업데이트가 잦음
     Studio 작업용. 안정성을 중시
 
-4. `nvidia-smi`로 확인
+4. `nvidia-smi`로 CUDA버전 확인
     수동 업데이트시 CUDA Toolkit 설치 옵션이 함께 제공
     아니면 해당 드라이버에 맞는 CUDA Toolkit 설치 https://developer.nvidia.com/cuda-downloads
 
