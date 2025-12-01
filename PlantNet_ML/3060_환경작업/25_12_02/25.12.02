@@ -12,10 +12,17 @@
     수동 업데이트시 CUDA Toolkit 설치 옵션이 함께 제공
     아니면 해당 드라이버에 맞는 CUDA Toolkit 설치 https://developer.nvidia.com/cuda-downloads
 
+1. CUDA버전과 호환되는 Python 설치 (https://pytorch.org/get-started/locally에  3.9-3.13만 지원한다고 안내되어있다.)
+
+1. pip update
+
+1. PyTorch 설치 https://pytorch.org/get-started/locally
+
+
 ================================================================
 이슈사향
 
-1. 인터넷 속도 느림
+2. 인터넷 속도 느림
     내 컴퓨터는 wifi 라우터에 직접적으로 연결되있는데도 불구하고 
     2.5Gbps까지 지원하는데 1.5Mbps밖에 속도가 안나오고 있었다.
     
