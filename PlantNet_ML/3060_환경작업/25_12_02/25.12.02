@@ -12,7 +12,8 @@
     수동 업데이트시 CUDA Toolkit 설치 옵션이 함께 제공
     아니면 해당 드라이버에 맞는 CUDA Toolkit 설치 https://developer.nvidia.com/cuda-downloads
 
-1. CUDA버전과 호환되는 Python 설치 (https://pytorch.org/get-started/locally에  3.9-3.13만 지원한다고 안내되어있다.)
+1. CUDA버전과 호환되는 Python 설치 
+- PyTorch 다운링크(https://pytorch.org/get-started/locally)에 3.9-3.13만 지원한다고 안내되어있다.
 
 1. pip update
 
