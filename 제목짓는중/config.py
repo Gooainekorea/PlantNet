@@ -13,20 +13,23 @@ class PathConfig:
     def __init__(self, base_path='C:/PlantNet/'):
         self.base_path = base_path
         
+        # 데이터 root
+        self.data_root = os.path.join(base_path, 'data/')
+
         # 원본 데이터 경로 
-        self.raw_data_root = os.path.join(base_path, 'plantnet_300K/')
-        self.raw_images = os.path.join(self.raw_data_root, 'raw_images/')
-        self.raw_metadata = os.path.join(self.raw_data_root, 'raw_metadata/')
+        self.raw_data = os.path.join(self.data_root, 'plantnet_300K/')
+        self.raw_images = os.path.join(self.raw_data, 'raw_images/')
+        self.raw_metadata = os.path.join(self.raw_data, 'raw_metadata/')
         
         # 전처리된 데이터 경로 
-        self.resized_images = os.path.join(self.processed_root, 'resized_images/')
-        self.processed_metadata = os.path.join(self.processed_root, 'processed_metadata/')
+        self.resized_images = os.path.join(self.data_root, 'resized_images/')
+        self.processed_metadata = os.path.join(self.data_root, 'processed_metadata/')
         
         # 출력 및 저장 경로 (Outputs & Artifacts)
         self.results = os.path.join(base_path, 'results/')
-        self.models = os.path.join(self.output_root, 'models/')
-        self.checkpoints = os.path.join(self.output_root, 'checkpoints/')
-        self.logs = os.path.join(self.output_root, 'logs/')
+        self.models = os.path.join(self.results, 'models/')
+        self.checkpoints = os.path.join(self.results, 'checkpoints/')
+        self.logs = os.path.join(self.results, 'logs/')
 
         # 초기화 시 디렉토리 자동 생성
         self._create_directories()
@@ -36,7 +39,7 @@ class PathConfig:
         디렉토리생성
         """
         dirs_to_create = [
-            self.processed_root,
+            self.results,
             self.resized_images,
             self.processed_metadata,
             self.output_root,
@@ -84,3 +87,5 @@ class TrainConfig:
         else:
             raise ValueError(f"{self.model_name}모델은 지원하지 않습니다."
                              f"지원 모델: {list(self.model_params.keys())}")
+        
+    
