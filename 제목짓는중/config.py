@@ -42,7 +42,7 @@ class PathConfig:
             self.results,
             self.resized_images,
             self.processed_metadata,
-            self.output_root,
+            self.data_root, # in 압축파일 풀은 데이터셋
             self.models,
             self.checkpoints,
             self.logs
