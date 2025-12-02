@@ -89,3 +89,7 @@ class TrainConfig:
                              f"지원 모델: {list(self.model_params.keys())}")
         
     
+if __name__ == "__main__":
+    path_config = PathConfig(base_path='./test_project/')
+    train_config = TrainConfig(model_name='alexnet')
+    print("학습 장치:", train_config.device)
