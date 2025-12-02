@@ -1,0 +1,49 @@
+.... 이게 맞나...? 설정파일을 폴더에 넣으면 전역파일이 아니니까 맞는거 아님?
+상향식으로 설계하셨다고 했는데 난 하양식으로 설계중인거 같은데
+아 졸려 커피나 마시고 할래
+
+PlantNet/          # 최상위
+├── config/
+│     └── config.py              # 프로젝트 설정 파일            
+│
+├── data/
+│   ├── plantnet_300K/         # 원본 데이터 (original)
+│   │   ├── raw_images/            # 원본 이미지
+│   │   │   ├── test/
+│   │   │   ├── train/
+│   │   │   └── val/
+│   │   │
+│   │   └── raw_metadata/          # 원본 메타데이터
+│   │       ├── metadata.json      # (cfg.metadata_source)
+│   │       ├── species_idx.json   # (cfg.species_idx_path)
+│   │       └── species_names.json # (cfg.species_name_path)
+│   │
+│   ├── resized/               # 리사이즈된 이미지 저장 (cfg.resized_images_path)
+│   │   ├── test/
+│   │   ├── train/
+│   │   └── val/
+│   │
+│   └── processed_metadata/    # 처리된 메타데이터 저장 (cfg.metadata_save_dir)
+│       ├── metadata.csv 
+│       ├── metadata.json
+│       ├── species_idx.json
+│       └── species_names.json
+│
+├── src/
+│   ├── model/
+│   │   └── model_train.py     # 모델 학습 코드
+│   │
+│   ├── preprocessing_code/
+│   │   └── processor_code.py  # 처리코드
+│   │
+│   └── main.py                # 전체 파이프라인 실행
+│
+└── results/
+    ├── models/
+    ├── checkpoints/              # 프로젝트 설정 파일
+    └── logs/ 
+
+"""
+데이터 전처리 경로와 파일이 있는지 없는지 확인 후 없으면 생성
+내부 경로는 base_path 기준으로 처리
+"""
