@@ -3,10 +3,12 @@
 
 2025.11.27 모델 학습의 안정성 확인. MobileNetV4 모델로 변경 시도
 timm 라이브러리 설치 (pip install timm, python -m pip install timm)
-모델 목록 확인 model_names = timm.list_models('mobilenetv4*', pretrained=True) - 중복되어나옴
+모델 목록 확인 
+model_names = timm.list_models('mobilenetv4*', pretrained=True) 
+- 중복되어나옴
 나는 하이브리드가아닌 CNN기반으로 했으므로 Conv 계열 모델 사용
 
-Small-Medium 성능비교
+Small-Medium 비교
 Small   : mobilenetv4_conv_small.e2400_r224_in1k
 Medium  : mobilenetv4_conv_medium.e500_r224_in1k
 """
