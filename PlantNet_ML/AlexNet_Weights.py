@@ -95,7 +95,7 @@ if logger.hasHandlers():
     logger.handlers.clear()
 
 # 파일 핸들러 (파일에 저장)
-file_handler = logging.FileHandler(log_path)
+file_handler = logging.FileHandler(log_path, encoding='utf-8')
 file_formatter = logging.Formatter('%(message)s')
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
@@ -116,7 +116,6 @@ simple_transform = transforms.Compose([ # CPU가 담당하는 변환부분
 
 # 데이터셋 정의
 # transform에 클래스의 인스턴스를 전달. CPU 변환만 적용
-# 아ㅋㅋㅋㅋㅋㅋ
 train_dataset = datasets.ImageFolder( # 트레이닝 데이터
     root=f'{images_path}train/',
     transform=simple_transform 
