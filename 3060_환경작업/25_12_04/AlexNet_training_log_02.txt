@@ -1,0 +1,716 @@
+----------------------------------------
+   - 크기           : 61.43M
+   - 연산량         : 1.43G
+   - 메모리 사용량  : 234.35 MB (Only Weights)
+추론 속도
+   - 지연시간       : 1.3243 ms
+   - 속도           : 755.10 frames/sec
+----------------------------------------
+
+
+스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.
+레이어 단계: 0
+Epoch 0 of 50
+----------------------------------------
+   - 크기           : 61.43M
+   - 연산량         : 1.43G
+   - 메모리 사용량  : 234.35 MB (Only Weights)
+추론 속도
+   - 지연시간       : 1.6933 ms
+   - 속도           : 590.56 frames/sec
+----------------------------------------
+
+
+스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.
+레이어 단계: 0
+Epoch 0 of 50
+----------------------------------------
+   - 크기           : 61.43M
+   - 연산량         : 1.43G
+   - 메모리 사용량  : 234.35 MB (Only Weights)
+추론 속도
+   - 지연시간       : 1.9902 ms
+   - 속도           : 502.46 frames/sec
+----------------------------------------
+
+
+스크립트 초기 설정이 완료되었습니다. 훈련을 시작할 준비가 되었습니다.
+레이어 단계: 0
+Epoch 0 of 50
+Training Loss: 6.3483, Validation Loss: 4.8037
+
+[Epoch 1] Summary:
+Loss     | Train: 6.3483 | Valid: 4.8037
+F1-Score | Train: 0.0228 | Valid: 0.0432
+Bal_Acc  | Train: 0.0313 | Valid: 0.0588
+Top-5    | Train: 0.0313 | Valid: 0.1505
+Precis'n | Train: 0.0275 | Valid: 0.0502
+------------------------------------------------------------
+
+모델 업데이트: 0.043216507881879807
+
+학습횟수: 1
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 1 of 50
+Training Loss: 5.2441, Validation Loss: 4.4667
+
+[Epoch 2] Summary:
+Loss     | Train: 5.2441 | Valid: 4.4667
+F1-Score | Train: 0.0492 | Valid: 0.0595
+Bal_Acc  | Train: 0.0755 | Valid: 0.0837
+Top-5    | Train: 0.0755 | Valid: 0.1969
+Precis'n | Train: 0.0619 | Valid: 0.0672
+------------------------------------------------------------
+
+모델 업데이트: 0.05948404222726822
+
+학습횟수: 2
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 2 of 50
+Training Loss: 4.8034, Validation Loss: 4.2987
+
+[Epoch 3] Summary:
+Loss     | Train: 4.8034 | Valid: 4.2987
+F1-Score | Train: 0.0636 | Valid: 0.0695
+Bal_Acc  | Train: 0.1044 | Valid: 0.1027
+Top-5    | Train: 0.1044 | Valid: 0.2340
+Precis'n | Train: 0.0739 | Valid: 0.0752
+------------------------------------------------------------
+
+모델 업데이트: 0.06946061551570892
+
+학습횟수: 3
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 3 of 50
+Training Loss: 4.5639, Validation Loss: 4.2063
+
+[Epoch 4] Summary:
+Loss     | Train: 4.5639 | Valid: 4.2063
+F1-Score | Train: 0.0709 | Valid: 0.0770
+Bal_Acc  | Train: 0.1243 | Valid: 0.1144
+Top-5    | Train: 0.1243 | Valid: 0.2494
+Precis'n | Train: 0.0767 | Valid: 0.0820
+------------------------------------------------------------
+
+모델 업데이트: 0.07703421264886856
+
+학습횟수: 4
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 4 of 50
+Training Loss: 4.3831, Validation Loss: 4.1189
+
+[Epoch 5] Summary:
+Loss     | Train: 4.3831 | Valid: 4.1189
+F1-Score | Train: 0.0844 | Valid: 0.0853
+Bal_Acc  | Train: 0.1490 | Valid: 0.1255
+Top-5    | Train: 0.1490 | Valid: 0.2645
+Precis'n | Train: 0.0928 | Valid: 0.0919
+------------------------------------------------------------
+
+모델 업데이트: 0.08528709411621094
+
+학습횟수: 5
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 5 of 50
+Training Loss: 4.2707, Validation Loss: 4.0640
+
+[Epoch 6] Summary:
+Loss     | Train: 4.2707 | Valid: 4.0640
+F1-Score | Train: 0.0899 | Valid: 0.0911
+Bal_Acc  | Train: 0.1654 | Valid: 0.1323
+Top-5    | Train: 0.1654 | Valid: 0.2756
+Precis'n | Train: 0.0963 | Valid: 0.1003
+------------------------------------------------------------
+
+모델 업데이트: 0.09113064408302307
+
+학습횟수: 6
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 6 of 50
+Training Loss: 4.1610, Validation Loss: 4.0334
+
+[Epoch 7] Summary:
+Loss     | Train: 4.1610 | Valid: 4.0334
+F1-Score | Train: 0.0989 | Valid: 0.0910
+Bal_Acc  | Train: 0.1824 | Valid: 0.1356
+Top-5    | Train: 0.1824 | Valid: 0.2813
+Precis'n | Train: 0.1029 | Valid: 0.0962
+------------------------------------------------------------
+Epoch 7 of 50
+Training Loss: 4.0908, Validation Loss: 4.0010
+
+[Epoch 8] Summary:
+Loss     | Train: 4.0908 | Valid: 4.0010
+F1-Score | Train: 0.1016 | Valid: 0.0941
+Bal_Acc  | Train: 0.1921 | Valid: 0.1416
+Top-5    | Train: 0.1921 | Valid: 0.2919
+Precis'n | Train: 0.1035 | Valid: 0.0986
+------------------------------------------------------------
+
+모델 업데이트: 0.09409496933221817
+
+학습횟수: 8
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 8 of 50
+Training Loss: 4.0248, Validation Loss: 3.9632
+
+[Epoch 9] Summary:
+Loss     | Train: 4.0248 | Valid: 3.9632
+F1-Score | Train: 0.1052 | Valid: 0.0991
+Bal_Acc  | Train: 0.2008 | Valid: 0.1479
+Top-5    | Train: 0.2008 | Valid: 0.2979
+Precis'n | Train: 0.1076 | Valid: 0.1018
+------------------------------------------------------------
+
+모델 업데이트: 0.09905383735895157
+
+학습횟수: 9
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 9 of 50
+Training Loss: 3.9762, Validation Loss: 3.9367
+
+[Epoch 10] Summary:
+Loss     | Train: 3.9762 | Valid: 3.9367
+F1-Score | Train: 0.1098 | Valid: 0.0982
+Bal_Acc  | Train: 0.2118 | Valid: 0.1468
+Top-5    | Train: 0.2118 | Valid: 0.3015
+Precis'n | Train: 0.1098 | Valid: 0.1008
+------------------------------------------------------------
+Epoch 10 of 50
+Training Loss: 3.9209, Validation Loss: 3.9265
+
+[Epoch 11] Summary:
+Loss     | Train: 3.9209 | Valid: 3.9265
+F1-Score | Train: 0.1141 | Valid: 0.1001
+Bal_Acc  | Train: 0.2228 | Valid: 0.1492
+Top-5    | Train: 0.2228 | Valid: 0.3089
+Precis'n | Train: 0.1160 | Valid: 0.1031
+------------------------------------------------------------
+
+모델 업데이트: 0.10010295361280441
+
+학습횟수: 11
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 11 of 50
+Training Loss: 3.8750, Validation Loss: 3.9183
+
+[Epoch 12] Summary:
+Loss     | Train: 3.8750 | Valid: 3.9183
+F1-Score | Train: 0.1158 | Valid: 0.1002
+Bal_Acc  | Train: 0.2289 | Valid: 0.1507
+Top-5    | Train: 0.2289 | Valid: 0.3093
+Precis'n | Train: 0.1157 | Valid: 0.1017
+------------------------------------------------------------
+
+모델 업데이트: 0.10017922520637512
+
+학습횟수: 12
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 12 of 50
+Training Loss: 3.8227, Validation Loss: 3.8825
+
+[Epoch 13] Summary:
+Loss     | Train: 3.8227 | Valid: 3.8825
+F1-Score | Train: 0.1191 | Valid: 0.1026
+Bal_Acc  | Train: 0.2372 | Valid: 0.1519
+Top-5    | Train: 0.2372 | Valid: 0.3134
+Precis'n | Train: 0.1163 | Valid: 0.1041
+------------------------------------------------------------
+
+모델 업데이트: 0.1026138961315155
+
+학습횟수: 13
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 13 of 50
+Training Loss: 3.7952, Validation Loss: 3.8757
+
+[Epoch 14] Summary:
+Loss     | Train: 3.7952 | Valid: 3.8757
+F1-Score | Train: 0.1212 | Valid: 0.1036
+Bal_Acc  | Train: 0.2468 | Valid: 0.1549
+Top-5    | Train: 0.2468 | Valid: 0.3165
+Precis'n | Train: 0.1177 | Valid: 0.1054
+------------------------------------------------------------
+
+모델 업데이트: 0.10363081097602844
+
+학습횟수: 14
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 14 of 50
+Training Loss: 3.7682, Validation Loss: 3.8639
+
+[Epoch 15] Summary:
+Loss     | Train: 3.7682 | Valid: 3.8639
+F1-Score | Train: 0.1297 | Valid: 0.1047
+Bal_Acc  | Train: 0.2553 | Valid: 0.1561
+Top-5    | Train: 0.2553 | Valid: 0.3165
+Precis'n | Train: 0.1241 | Valid: 0.1067
+------------------------------------------------------------
+
+모델 업데이트: 0.10471387207508087
+
+학습횟수: 15
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 15 of 50
+Training Loss: 3.7370, Validation Loss: 3.8525
+
+[Epoch 16] Summary:
+Loss     | Train: 3.7370 | Valid: 3.8525
+F1-Score | Train: 0.1247 | Valid: 0.1071
+Bal_Acc  | Train: 0.2506 | Valid: 0.1598
+Top-5    | Train: 0.2506 | Valid: 0.3155
+Precis'n | Train: 0.1213 | Valid: 0.1080
+------------------------------------------------------------
+
+모델 업데이트: 0.10711020976305008
+
+학습횟수: 16
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 16 of 50
+Training Loss: 3.7181, Validation Loss: 3.8550
+
+[Epoch 17] Summary:
+Loss     | Train: 3.7181 | Valid: 3.8550
+F1-Score | Train: 0.1298 | Valid: 0.1069
+Bal_Acc  | Train: 0.2610 | Valid: 0.1583
+Top-5    | Train: 0.2610 | Valid: 0.3197
+Precis'n | Train: 0.1258 | Valid: 0.1099
+------------------------------------------------------------
+Epoch 17 of 50
+Training Loss: 3.7002, Validation Loss: 3.8345
+
+[Epoch 18] Summary:
+Loss     | Train: 3.7002 | Valid: 3.8345
+F1-Score | Train: 0.1308 | Valid: 0.1074
+Bal_Acc  | Train: 0.2657 | Valid: 0.1584
+Top-5    | Train: 0.2657 | Valid: 0.3184
+Precis'n | Train: 0.1255 | Valid: 0.1081
+------------------------------------------------------------
+
+모델 업데이트: 0.10738367587327957
+
+학습횟수: 18
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 18 of 50
+Training Loss: 3.6831, Validation Loss: 3.8213
+
+[Epoch 19] Summary:
+Loss     | Train: 3.6831 | Valid: 3.8213
+F1-Score | Train: 0.1357 | Valid: 0.1077
+Bal_Acc  | Train: 0.2692 | Valid: 0.1589
+Top-5    | Train: 0.2692 | Valid: 0.3179
+Precis'n | Train: 0.1325 | Valid: 0.1084
+------------------------------------------------------------
+
+모델 업데이트: 0.1077096089720726
+
+학습횟수: 19
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 19 of 50
+Training Loss: 3.6718, Validation Loss: 3.8292
+
+[Epoch 20] Summary:
+Loss     | Train: 3.6718 | Valid: 3.8292
+F1-Score | Train: 0.1293 | Valid: 0.1100
+Bal_Acc  | Train: 0.2669 | Valid: 0.1618
+Top-5    | Train: 0.2669 | Valid: 0.3227
+Precis'n | Train: 0.1230 | Valid: 0.1106
+------------------------------------------------------------
+
+모델 업데이트: 0.11001361906528473
+
+학습횟수: 20
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 20 of 50
+Training Loss: 3.6400, Validation Loss: 3.8078
+
+[Epoch 21] Summary:
+Loss     | Train: 3.6400 | Valid: 3.8078
+F1-Score | Train: 0.1329 | Valid: 0.1079
+Bal_Acc  | Train: 0.2729 | Valid: 0.1587
+Top-5    | Train: 0.2729 | Valid: 0.3160
+Precis'n | Train: 0.1257 | Valid: 0.1080
+------------------------------------------------------------
+Epoch 21 of 50
+Training Loss: 3.6204, Validation Loss: 3.8257
+
+[Epoch 22] Summary:
+Loss     | Train: 3.6204 | Valid: 3.8257
+F1-Score | Train: 0.1358 | Valid: 0.1103
+Bal_Acc  | Train: 0.2798 | Valid: 0.1608
+Top-5    | Train: 0.2798 | Valid: 0.3203
+Precis'n | Train: 0.1290 | Valid: 0.1115
+------------------------------------------------------------
+
+모델 업데이트: 0.11028378456830978
+
+학습횟수: 22
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 22 of 50
+Training Loss: 3.5987, Validation Loss: 3.8130
+
+[Epoch 23] Summary:
+Loss     | Train: 3.5987 | Valid: 3.8130
+F1-Score | Train: 0.1343 | Valid: 0.1127
+Bal_Acc  | Train: 0.2739 | Valid: 0.1632
+Top-5    | Train: 0.2739 | Valid: 0.3242
+Precis'n | Train: 0.1269 | Valid: 0.1131
+------------------------------------------------------------
+
+모델 업데이트: 0.1126994788646698
+
+학습횟수: 23
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 23 of 50
+Training Loss: 3.5977, Validation Loss: 3.7924
+
+[Epoch 24] Summary:
+Loss     | Train: 3.5977 | Valid: 3.7924
+F1-Score | Train: 0.1388 | Valid: 0.1124
+Bal_Acc  | Train: 0.2831 | Valid: 0.1634
+Top-5    | Train: 0.2831 | Valid: 0.3260
+Precis'n | Train: 0.1297 | Valid: 0.1124
+------------------------------------------------------------
+Epoch 24 of 50
+Training Loss: 3.5650, Validation Loss: 3.7961
+
+[Epoch 25] Summary:
+Loss     | Train: 3.5650 | Valid: 3.7961
+F1-Score | Train: 0.1384 | Valid: 0.1100
+Bal_Acc  | Train: 0.2885 | Valid: 0.1614
+Top-5    | Train: 0.2885 | Valid: 0.3237
+Precis'n | Train: 0.1283 | Valid: 0.1106
+------------------------------------------------------------
+Epoch 25 of 50
+Training Loss: 3.5777, Validation Loss: 3.8012
+
+[Epoch 26] Summary:
+Loss     | Train: 3.5777 | Valid: 3.8012
+F1-Score | Train: 0.1352 | Valid: 0.1135
+Bal_Acc  | Train: 0.2842 | Valid: 0.1646
+Top-5    | Train: 0.2842 | Valid: 0.3266
+Precis'n | Train: 0.1265 | Valid: 0.1146
+------------------------------------------------------------
+
+모델 업데이트: 0.11348720639944077
+
+학습횟수: 26
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 26 of 50
+Training Loss: 3.5653, Validation Loss: 3.8127
+
+[Epoch 27] Summary:
+Loss     | Train: 3.5653 | Valid: 3.8127
+F1-Score | Train: 0.1365 | Valid: 0.1110
+Bal_Acc  | Train: 0.2901 | Valid: 0.1641
+Top-5    | Train: 0.2901 | Valid: 0.3263
+Precis'n | Train: 0.1250 | Valid: 0.1106
+------------------------------------------------------------
+Epoch 27 of 50
+Training Loss: 3.5333, Validation Loss: 3.8096
+
+[Epoch 28] Summary:
+Loss     | Train: 3.5333 | Valid: 3.8096
+F1-Score | Train: 0.1396 | Valid: 0.1151
+Bal_Acc  | Train: 0.2927 | Valid: 0.1678
+Top-5    | Train: 0.2927 | Valid: 0.3292
+Precis'n | Train: 0.1288 | Valid: 0.1161
+------------------------------------------------------------
+
+모델 업데이트: 0.11514097452163696
+
+학습횟수: 28
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 28 of 50
+Training Loss: 3.5326, Validation Loss: 3.8008
+
+[Epoch 29] Summary:
+Loss     | Train: 3.5326 | Valid: 3.8008
+F1-Score | Train: 0.1405 | Valid: 0.1121
+Bal_Acc  | Train: 0.2959 | Valid: 0.1643
+Top-5    | Train: 0.2959 | Valid: 0.3275
+Precis'n | Train: 0.1301 | Valid: 0.1115
+------------------------------------------------------------
+Epoch 29 of 50
+Training Loss: 3.5327, Validation Loss: 3.7978
+
+[Epoch 30] Summary:
+Loss     | Train: 3.5327 | Valid: 3.7978
+F1-Score | Train: 0.1429 | Valid: 0.1114
+Bal_Acc  | Train: 0.2999 | Valid: 0.1635
+Top-5    | Train: 0.2999 | Valid: 0.3272
+Precis'n | Train: 0.1304 | Valid: 0.1124
+------------------------------------------------------------
+Epoch 30 of 50
+Training Loss: 3.5205, Validation Loss: 3.7993
+
+[Epoch 31] Summary:
+Loss     | Train: 3.5205 | Valid: 3.7993
+F1-Score | Train: 0.1426 | Valid: 0.1130
+Bal_Acc  | Train: 0.2971 | Valid: 0.1668
+Top-5    | Train: 0.2971 | Valid: 0.3272
+Precis'n | Train: 0.1316 | Valid: 0.1123
+------------------------------------------------------------
+Epoch 31 of 50
+Training Loss: 3.5117, Validation Loss: 3.7854
+
+[Epoch 32] Summary:
+Loss     | Train: 3.5117 | Valid: 3.7854
+F1-Score | Train: 0.1456 | Valid: 0.1123
+Bal_Acc  | Train: 0.3027 | Valid: 0.1666
+Top-5    | Train: 0.3027 | Valid: 0.3298
+Precis'n | Train: 0.1347 | Valid: 0.1116
+------------------------------------------------------------
+Epoch 32 of 50
+Training Loss: 3.4970, Validation Loss: 3.7719
+
+[Epoch 33] Summary:
+Loss     | Train: 3.4970 | Valid: 3.7719
+F1-Score | Train: 0.1434 | Valid: 0.1139
+Bal_Acc  | Train: 0.3052 | Valid: 0.1678
+Top-5    | Train: 0.3052 | Valid: 0.3289
+Precis'n | Train: 0.1308 | Valid: 0.1119
+------------------------------------------------------------
+Epoch 33 of 50
+Training Loss: 3.5067, Validation Loss: 3.7904
+
+[Epoch 34] Summary:
+Loss     | Train: 3.5067 | Valid: 3.7904
+F1-Score | Train: 0.1435 | Valid: 0.1132
+Bal_Acc  | Train: 0.3024 | Valid: 0.1673
+Top-5    | Train: 0.3024 | Valid: 0.3285
+Precis'n | Train: 0.1314 | Valid: 0.1135
+------------------------------------------------------------
+Epoch 34 of 50
+Training Loss: 3.4806, Validation Loss: 3.7896
+
+[Epoch 35] Summary:
+Loss     | Train: 3.4806 | Valid: 3.7896
+F1-Score | Train: 0.1433 | Valid: 0.1116
+Bal_Acc  | Train: 0.3110 | Valid: 0.1659
+Top-5    | Train: 0.3110 | Valid: 0.3285
+Precis'n | Train: 0.1301 | Valid: 0.1109
+------------------------------------------------------------
+Epoch 35 of 50
+Training Loss: 3.4740, Validation Loss: 3.7720
+
+[Epoch 36] Summary:
+Loss     | Train: 3.4740 | Valid: 3.7720
+F1-Score | Train: 0.1427 | Valid: 0.1131
+Bal_Acc  | Train: 0.3092 | Valid: 0.1663
+Top-5    | Train: 0.3092 | Valid: 0.3251
+Precis'n | Train: 0.1288 | Valid: 0.1122
+------------------------------------------------------------
+Epoch 36 of 50
+Training Loss: 3.4662, Validation Loss: 3.7828
+
+[Epoch 37] Summary:
+Loss     | Train: 3.4662 | Valid: 3.7828
+F1-Score | Train: 0.1474 | Valid: 0.1148
+Bal_Acc  | Train: 0.3125 | Valid: 0.1686
+Top-5    | Train: 0.3125 | Valid: 0.3287
+Precis'n | Train: 0.1321 | Valid: 0.1152
+------------------------------------------------------------
+Epoch 37 of 50
+Training Loss: 3.4571, Validation Loss: 3.7877
+
+[Epoch 38] Summary:
+Loss     | Train: 3.4571 | Valid: 3.7877
+F1-Score | Train: 0.1415 | Valid: 0.1149
+Bal_Acc  | Train: 0.3080 | Valid: 0.1684
+Top-5    | Train: 0.3080 | Valid: 0.3310
+Precis'n | Train: 0.1283 | Valid: 0.1159
+------------------------------------------------------------
+Epoch 38 of 50
+Training Loss: 3.4582, Validation Loss: 3.7854
+
+[Epoch 39] Summary:
+Loss     | Train: 3.4582 | Valid: 3.7854
+F1-Score | Train: 0.1425 | Valid: 0.1128
+Bal_Acc  | Train: 0.3101 | Valid: 0.1672
+Top-5    | Train: 0.3101 | Valid: 0.3315
+Precis'n | Train: 0.1283 | Valid: 0.1118
+------------------------------------------------------------
+Epoch 39 of 50
+Training Loss: 3.4382, Validation Loss: 3.7736
+
+[Epoch 40] Summary:
+Loss     | Train: 3.4382 | Valid: 3.7736
+F1-Score | Train: 0.1426 | Valid: 0.1146
+Bal_Acc  | Train: 0.3111 | Valid: 0.1677
+Top-5    | Train: 0.3111 | Valid: 0.3342
+Precis'n | Train: 0.1292 | Valid: 0.1157
+------------------------------------------------------------
+Epoch 40 of 50
+Training Loss: 3.4351, Validation Loss: 3.7743
+
+[Epoch 41] Summary:
+Loss     | Train: 3.4351 | Valid: 3.7743
+F1-Score | Train: 0.1439 | Valid: 0.1154
+Bal_Acc  | Train: 0.3136 | Valid: 0.1669
+Top-5    | Train: 0.3136 | Valid: 0.3330
+Precis'n | Train: 0.1294 | Valid: 0.1151
+------------------------------------------------------------
+
+모델 업데이트: 0.11541221290826797
+
+학습횟수: 41
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 41 of 50
+Training Loss: 3.4514, Validation Loss: 3.7769
+
+[Epoch 42] Summary:
+Loss     | Train: 3.4514 | Valid: 3.7769
+F1-Score | Train: 0.1473 | Valid: 0.1154
+Bal_Acc  | Train: 0.3152 | Valid: 0.1666
+Top-5    | Train: 0.3152 | Valid: 0.3397
+Precis'n | Train: 0.1331 | Valid: 0.1150
+------------------------------------------------------------
+
+모델 업데이트: 0.11543019115924835
+
+학습횟수: 42
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 42 of 50
+Training Loss: 3.4511, Validation Loss: 3.7842
+
+[Epoch 43] Summary:
+Loss     | Train: 3.4511 | Valid: 3.7842
+F1-Score | Train: 0.1430 | Valid: 0.1144
+Bal_Acc  | Train: 0.3094 | Valid: 0.1679
+Top-5    | Train: 0.3094 | Valid: 0.3359
+Precis'n | Train: 0.1292 | Valid: 0.1138
+------------------------------------------------------------
+Epoch 43 of 50
+Training Loss: 3.4364, Validation Loss: 3.7844
+
+[Epoch 44] Summary:
+Loss     | Train: 3.4364 | Valid: 3.7844
+F1-Score | Train: 0.1436 | Valid: 0.1160
+Bal_Acc  | Train: 0.3133 | Valid: 0.1706
+Top-5    | Train: 0.3133 | Valid: 0.3345
+Precis'n | Train: 0.1284 | Valid: 0.1148
+------------------------------------------------------------
+
+모델 업데이트: 0.11604422330856323
+
+학습횟수: 44
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 44 of 50
+Training Loss: 3.4311, Validation Loss: 3.7796
+
+[Epoch 45] Summary:
+Loss     | Train: 3.4311 | Valid: 3.7796
+F1-Score | Train: 0.1476 | Valid: 0.1176
+Bal_Acc  | Train: 0.3192 | Valid: 0.1689
+Top-5    | Train: 0.3192 | Valid: 0.3342
+Precis'n | Train: 0.1325 | Valid: 0.1187
+------------------------------------------------------------
+
+모델 업데이트: 0.11757516860961914
+
+학습횟수: 45
+
+모델 저장 성공. 경로 : output_data/models/AlexNet_model.pth
+모델 성능 개선으로 모델이 저장되었습니다.
+Epoch 45 of 50
+Training Loss: 3.4422, Validation Loss: 3.7974
+
+[Epoch 46] Summary:
+Loss     | Train: 3.4422 | Valid: 3.7974
+F1-Score | Train: 0.1451 | Valid: 0.1151
+Bal_Acc  | Train: 0.3123 | Valid: 0.1683
+Top-5    | Train: 0.3123 | Valid: 0.3334
+Precis'n | Train: 0.1316 | Valid: 0.1147
+------------------------------------------------------------
+Epoch 46 of 50
+Training Loss: 3.4168, Validation Loss: 3.7738
+
+[Epoch 47] Summary:
+Loss     | Train: 3.4168 | Valid: 3.7738
+F1-Score | Train: 0.1463 | Valid: 0.1150
+Bal_Acc  | Train: 0.3230 | Valid: 0.1670
+Top-5    | Train: 0.3230 | Valid: 0.3305
+Precis'n | Train: 0.1304 | Valid: 0.1132
+------------------------------------------------------------
+Epoch 47 of 50
+Training Loss: 3.4221, Validation Loss: 3.7653
+
+[Epoch 48] Summary:
+Loss     | Train: 3.4221 | Valid: 3.7653
+F1-Score | Train: 0.1465 | Valid: 0.1162
+Bal_Acc  | Train: 0.3166 | Valid: 0.1667
+Top-5    | Train: 0.3166 | Valid: 0.3330
+Precis'n | Train: 0.1316 | Valid: 0.1159
+------------------------------------------------------------
+Epoch 48 of 50
+Training Loss: 3.4105, Validation Loss: 3.7807
+
+[Epoch 49] Summary:
+Loss     | Train: 3.4105 | Valid: 3.7807
+F1-Score | Train: 0.1485 | Valid: 0.1141
+Bal_Acc  | Train: 0.3195 | Valid: 0.1657
+Top-5    | Train: 0.3195 | Valid: 0.3345
+Precis'n | Train: 0.1346 | Valid: 0.1131
+------------------------------------------------------------
+Epoch 49 of 50
+Training Loss: 3.4065, Validation Loss: 3.7791
+
+[Epoch 50] Summary:
+Loss     | Train: 3.4065 | Valid: 3.7791
+F1-Score | Train: 0.1487 | Valid: 0.1160
+Bal_Acc  | Train: 0.3236 | Valid: 0.1689
+Top-5    | Train: 0.3236 | Valid: 0.3337
+Precis'n | Train: 0.1319 | Valid: 0.1147
+------------------------------------------------------------
+훈련이 완료되었습니다.
+손실 그래프가 output_data/models/AlexNet_loss.png 에 저장되었습니다.
+평가 지표 그래프가 output_data/models/AlexNet_evaluation_metrics.png 에 저장되었습니다.
