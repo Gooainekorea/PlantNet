@@ -19,8 +19,8 @@ timm라이브러리를 활용해 검증된 아키텍처(Small/Medium)를 빠르�
 1. 식물 인식 및 정보 제공 소프트웨어 모듈화 (진행중)
 2. 하드웨어 프로토타입 제작 (센서, 모터, 골격등 재료 구비 완료)
     1. MCU + Sensor
-    2. MCU + Senseor + Cam
-    3. MCU + MCU + Senseor + Cam
+    2. MCU + Sensor + Cam
+    3. MCU + MCU + Sensor + Cam
 3. MCU 기반 엣지 영상처리 및 최적화
 4. MCU 내부 경량 모델 추론 시도
 5. 서버 - 기기 간 양방향 통신 및 앱 통합
@@ -31,7 +31,7 @@ timm라이브러리를 활용해 검증된 아키텍처(Small/Medium)를 빠르�
 ##### 하드웨어
 - 구형 삼성 노트북
 ##### OS
-- Debien Linux
+- Debian Linux
 ##### 기능
 - AI Server
 - DB Server, Data Concentrator
@@ -60,7 +60,7 @@ timm라이브러리를 활용해 검증된 아키텍처(Small/Medium)를 빠르�
 - ESP: 비전처리, 외부 통신, 서버와 데이터 동기화.
 
 ### 백엔드 서버 마이그레이션
-초기 프로토타입은 빠른 개발을 위해 Node.js와 파일 시스템 기반으로 구축되었으나, 중앙서버역활로 재구성합니다.
+초기 프로토타입은 빠른 개발을 위해 Node.js와 파일 시스템 기반으로 구축되었으나, 중앙서버역할로 재구성합니다.
 
 
 # 간단한 디랙토리 구분
