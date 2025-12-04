@@ -230,12 +230,16 @@ class FineTuneAlexNet(nn.Module):
         # 기본값
         is_plateau = True
 
-        # Val_F1기준 정체 판단
+        # # Val_F1기준 정체 판단
+        # for i in range(1, len(recent)):
+        #     if recent[i] > recent[i - 1]: 
+        #         is_plateau = False
+        #         break
         for i in range(1, len(recent)):
-            if recent[i] > recent[i - 1]: 
-                is_plateau = False
+            if recent[i] <= recent[i - 1]: 
+                print("성능이 개선 되지 않아 모델이 저장되지 않았습니다.")
+                is_plateau = True
                 break
-
         # # Loss 기준 정체 판단
         # for i in range(1, len(recent)):
         #     if recent[i] >= recent[i - 1]: 
