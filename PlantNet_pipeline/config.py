@@ -59,7 +59,7 @@ class PathConfig:
 
 class TrainConfig:
     """
-    모델 학습에 필요한 하이퍼파라미터
+    모델 학습에 필요한 하이퍼파라미터 25.12.05 yaml으로 빼기
     """
     def __init__(self, model_name='alexnet'):
         self.model_name = model_name.lower()
